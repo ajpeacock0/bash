@@ -106,15 +106,19 @@ rmbr() { git branch -D $1; }
 alias rmbr_remote="git push origin --delete "
 
 # View last 10 local branches sorted by last commit in descending order
-alias brst="git for-each-ref --sort=-committerdate --count=10 refs/heads/ --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'"
+alias brst="git for-each-ref --sort=-committerdate --count=10 refs/heads/ --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) 
+(%(color:green)%(committerdate:relative)%(color:reset))'"
 
 # View all local branches sorted by last commit in ascending order
-alias brsort="git for-each-ref --sort=committerdate refs/heads/ --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'"
+alias brsort="git for-each-ref --sort=committerdate refs/heads/ --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) 
+(%(color:green)%(committerdate:relative)%(color:reset))'"
 
 # View all remote branches sorted by last commit in ascending order
-alias remotebrsort="git for-each-ref --sort=committerdate refs/remotes/ --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))' | tail -10"
+alias remotebrsort="git for-each-ref --sort=committerdate refs/remotes/ --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) 
+(%(color:green)%(committerdate:relative)%(color:reset))' | tail -10"
 
-alias remotebrcoa="git for-each-ref --sort=committerdate refs/remotes/origin/coa* --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))' | tail -10"
+alias remotebrcoa="git for-each-ref --sort=committerdate refs/remotes/origin/coa* --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) 
+(%(color:green)%(committerdate:relative)%(color:reset))' | tail -10"
 
 # List latest branches
 br_la() { git log -1 --after='4 weeks ago' -s $1; }
