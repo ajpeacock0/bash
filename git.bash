@@ -44,7 +44,7 @@ alias review="git review"
 alias updatesub="git submodule update --recursive --init"
 
 # Rename a file, normally case differences in git name to local name
-alias gitmv="git mv -f "
+alias gmv="git mv -f "
 
 # Delete all non-commited files (- etags file)
 alias nuke="git clean -fdx -e ".tags" -e \".tags_sorted_by_file\""
@@ -202,6 +202,9 @@ alias cinfo="git diff-tree --no-commit-id --name-status -r "
 
 # List all existing files being tracked by the current branch
 tracked() { git ls-tree -r $(currbr) --name-only; }
+
+# Open all tracked files
+otracked() { tracked | xargs "$SUBL_FUNC"; }
 
 # view the file changes in the given commit ID
 cdiff () { git diff $1^ $1; }
