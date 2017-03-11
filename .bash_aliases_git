@@ -1,3 +1,7 @@
+#### Constants ####
+
+FORMAT="%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))"
+
 #### General ####
 
 # Improved git log
@@ -74,10 +78,10 @@ undo_last() { reset && discard; }
 #### Conflicts ####
 
 # list all conflicted files
-alias conf_ls="git diff --name-only --diff-filter=U"
+conf_ls() { git diff --name-only --diff-filter=U; }
 
 # open conflicted files in sublime
-alias conf_subl="git diff --name-only --diff-filter=U && git diff --name-only --diff-filter=U | xargs $SUBL_ALIAS"
+alias conf_subl="conf_ls && conf_ls xargs $SUBL_ALIAS"
 
 # add the conflicted files after you fix them
 conf_add() { git diff --name-only --diff-filter=U | xargs git add; }
@@ -106,19 +110,13 @@ rmbr() { git branch -D $1; }
 alias rmbr_remote="git push origin --delete "
 
 # View last 10 local branches sorted by last commit in descending order
-alias brst="git for-each-ref --sort=-committerdate --count=10 refs/heads/ --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) 
-(%(color:green)%(committerdate:relative)%(color:reset))'"
+alias brst="git for-each-ref --sort=-committerdate --count=10 refs/heads/ --format='$FORMAT'"
 
 # View all local branches sorted by last commit in ascending order
-alias brsort="git for-each-ref --sort=committerdate refs/heads/ --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) 
-(%(color:green)%(committerdate:relative)%(color:reset))'"
+alias brsort="git for-each-ref --sort=committerdate refs/heads/ --format='$FORMAT'"
 
 # View all remote branches sorted by last commit in ascending order
-alias remotebrsort="git for-each-ref --sort=committerdate refs/remotes/ --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) 
-(%(color:green)%(committerdate:relative)%(color:reset))' | tail -10"
-
-alias remotebrcoa="git for-each-ref --sort=committerdate refs/remotes/origin/coa* --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) 
-(%(color:green)%(committerdate:relative)%(color:reset))' | tail -10"
+alias remotebrsort="git for-each-ref --sort=committerdate refs/remotes/ --format='$FORMAT' | tail -10"
 
 # List latest branches
 br_la() { git log -1 --after='4 weeks ago' -s $1; }
