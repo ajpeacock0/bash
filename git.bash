@@ -19,8 +19,14 @@ alias gpush="git stash"
 # Shortcut for stash
 alias gpop="git stash apply"
 
-# Show the content of the top change in stash
-alias gds="git stash show -p"
+# Show the content of the top change in stash. gss = Git Stash Show
+alias gss="git stash show -p"
+
+# Shortcut for git stash drop
+alias gsd="git stash drop"
+
+# Git stash list files changed
+alias gsl="git stash show"
 
 # Shortcut for rebase continue 
 alias cont="git rebase --continue"
@@ -86,7 +92,7 @@ alias conf_subl="conf_ls && conf_ls xargs $SUBL_ALIAS"
 # add the conflicted files after you fix them
 conf_add() { git diff --name-only --diff-filter=U | xargs git add; }
 
-# add the conflicted files after you fix them
+# Resolve conflict by discarding local changes
 conf_ours() { git diff --name-only --diff-filter=U | xargs git checkout --ours; }
 
 #### Branches ####
@@ -109,6 +115,24 @@ rmbr() { git branch -D $1; }
 # Delete a remote branch
 alias rmbr_remote="git push origin --delete "
 
+# Create new branch based off origin/master and checkout into the given name
+cdbranch () { git checkout -b $1 remotes/origin/master; }
+
+# Print the name of the current branch
+currbr() { git rev-parse --abbrev-ref HEAD; }
+
+# Fetches origin and rebases for this branch
+rebbr() { git fetch origin && git rebase origin/$(currbr) --stat; }
+
+# Fetches origin and rebases ontop on master
+rebor() { git fetch origin && git rebase origin/master --stat; }
+
+# Fetches origin and rebases ontop on master and switches to origin/master
+rebmaster() { git fetch origin && git rebase origin/master --stat && git checkout origin/master; }
+
+# Resets the current branch to the latest branch whille ignoring local changes
+pull_ignore_local() { git fetch origin && git reset --hard origin/$(currbr); }
+
 # View last 10 local branches sorted by last commit in descending order
 alias brst="git for-each-ref --sort=-committerdate --count=10 refs/heads/ --format='$FORMAT'"
 
@@ -118,8 +142,8 @@ alias brsort="git for-each-ref --sort=committerdate refs/heads/ --format='$FORMA
 # View all remote branches sorted by last commit in ascending order
 alias remotebrsort="git for-each-ref --sort=committerdate refs/remotes/ --format='$FORMAT' | tail -10"
 
-# List latest branches
-br_la() { git log -1 --after='4 weeks ago' -s $1; }
+# Check if the given branch has not been altered in over 4 weeks
+_br_la() { git log -1 --after='4 weeks ago' -s $1; }
 
 # TODO: add comment stating if branch has been merged with master
 # TODO: echo "Deleted <branch>" correctly
@@ -127,7 +151,7 @@ rm_od ()
 {
     for k in $(git branch | sed /\*/d); do 
     # NOTE: change '-z' to '-n' to filter by BEFORE date
-      if [ -z "$(br_la $k)" ]; then
+      if [ -z "$(_br_la $k)" ]; then
         # git branch -D $k
         echo "Comfirm deletion of branch $(git log -1 --pretty='%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'$k)?"
             while true; do
@@ -142,29 +166,6 @@ rm_od ()
       fi
     done
 }
-
-# Create new branch based off origin/master and checkout into the given name
-cdbranch () { git checkout -b $1 remotes/origin/master; }
-
-# Print the name of the current branch
-currbr() { git rev-parse --abbrev-ref HEAD; }
-
-# Fetches origin and rebases for this branch
-rebbr() { git fetch origin && git rebase origin/$(currbr) --stat; }
-
-# Fetches origin and rebases ontop on master
-rebandroid() { git fetch origin && git rebase origin/android_1611 --stat; }
-
-# Fetches origin and rebases ontop on master
-rebor() { git fetch origin && git rebase origin/master --stat; }
-
-# Fetches origin and rebases ontop on master and switches to origin/master
-rebmaster() { git fetch origin && git rebase origin/master --stat && git checkout origin/master; }
-
-# Resets the current branch to the latest branch whille ignoring local changes
-pull_ignore_local() { git fetch origin && git reset --hard origin/$(currbr); }
-
-adb1 () { "$C/tools/adt-bundle-windows-x86_64-20140702/sdk/platform-tools/adb.exe"; }
 
 #### Given File Change ####
 
@@ -186,7 +187,7 @@ alias reflogf="git rev-list --all "
 #### All File Changes ####
 
 # Shortcut for `git diff`
-alias gdf="git diff"
+alias df="git diff"
 
 # View the changes made in the last commit - df = diff last
 alias dl="git diff HEAD^ HEAD"

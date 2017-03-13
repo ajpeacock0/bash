@@ -25,7 +25,7 @@ ROMAN_APP="$APP_DIR/$ROMAN_APP_NAME/files"
 ROMAN_APP_IN="$APP_DIR/$ROMAN_APP_IN_NAME/files"
 XAMARIN_APP="$APP_DIR/$XAMARIN_APP_NAME/files"
 
-DDR_LOC="$WORK/bug_files/CoA_testing"
+DDR_LOC="$WORK/stored_logs"
 COA_BUILDS="$WORK/bug_files/coa_builds"
 
 #### Android Viewing + Interaction - Private Functions ####
@@ -34,7 +34,7 @@ COA_BUILDS="$WORK/bug_files/coa_builds"
 _app_rm_log () { $ADB shell rm $1/CDPTraces.log; }
 
 # Pull the CDP log
-_app_pull_log () { $ADB pull $1/CDPTraces.log CDPTraces.log; }
+_app_pull_log () { $ADB pull $1/CDPTraces.log CDPTraces_android.log; }
 
 # Close application
 _app_stop () { adb shell am force-stop $1; }
@@ -87,26 +87,26 @@ xamarin_nuke () { _app_nuke $XAMARIN_APP_NAME; }
 #### Storing Logs - Private Functions ####
 
 # Macro style for requiring 1 or more arguments
-_REQUIRE_ARGS () { if [ $# -eq 0 ]; then echo "No arguments provided"; return; fi; }
+_REQUIRE_ARGS () { if [ $# -eq 0 ]; then echo "No arguments provided"; return 1; fi; return 0; }
 
 # Generate Date Time Stamp
 _dts() { date +%Y-%m-%d-%H-%M-%S; }
 
 # Create a directory with timestamp
-_dmkdir() { DDIR="$DDR_LOC/$(_dts)"; export DDIR; mkdir $DDIR; }
+_dmkdir() { DDIR="$DDR_LOC/$(_dts)"; mkdir $DDIR && cd "$DDIR" && exp; }
 
 # Store the 
-_store_log () { cp "$1\ConnectedDevicesPlatform\CDPTraces.log" "$DDIR\CDPTraces_PC.log"; }
+_store_log () { cp "$1\ConnectedDevicesPlatform\CDPTraces.log" "$CDPTraces_PC.log"; }
 
 # Pull the log to the given application and given desktop directory log to a timestamp directory e.g. store_coa $CDP1_VM
 # $1: Function which will pull the CDPTraces.log from a android application
 # $2: [Optional] Name of VM/PC which has a shared directory containing CDPTraces.log
-_store () { _REQUIRE_ARGS $@; $1 && _dmkdir && mv CDPTraces.log "$DDIR\CDPTraces_android.log"; if [ $# -eq 1 ]; then cd "$DDIR"; else $(_store_log $2) && cd "$DDIR"; fi; }
+_store () { _REQUIRE_ARGS $@ && _dmkdir && $1; if [ $# -eq 2 ]; then $(_store_log $2); fi; }
 
 #### Storing Logs - Public Functions ####
 
 # $1: Name of VM/PC which has a shared directory containing CDPTraces.log
-store_log () { _REQUIRE_ARGS $@; _dmkdir && $(_store_log $1) && cd "$DDIR"; }
+store_log () { _REQUIRE_ARGS $@ && _dmkdir && $(_store_log $1); }
 
 # $1: [Optional] Name of VM/PC which has a shared directory containing CDPTraces.log. This will be stored with the Android log
 store_coa () { $(_store coa_pull_log $@); }

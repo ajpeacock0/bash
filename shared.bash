@@ -13,6 +13,7 @@ CDP_2="$C/git_repos/cdp_2"
 CDP_MASTER="$C/git_repos/cdp_master"
 
 CYGWIN="$C/cygwin64/home/anpea"
+CYGWIN_WIN="C:/cygwin64/home/anpea"
 
 # Application directories
 ADB="$C/tools/adt-bundle-windows-x86_64-20140702/sdk/platform-tools/adb"
@@ -23,3 +24,4 @@ SUBL_FUNC="$C/Program Files/Sublime Text 3/subl.exe"
 
 # Note files directories
 WORK="$C/work_files"
+WORK_WIN="C:/work_files"
