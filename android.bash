@@ -1,13 +1,12 @@
 #### Constants ####
 
-# PC + VM Names used for `store_<specific>` commands
-CDP1="\\\\DESKTOP-5MMAKOD"; export CDP1_VM
-CDP2="\\\\DESKTOP-4HQ4UEA"; export CDP2_VM
-MASTER="\\\\DESKTOP-CTKCQFE"; export MASTER_VM
-RS1="\\\\DESKTOP-KDTTPVC"; export RS1_VM
-OFFICIAL="\\\\DESKTOP-NM3ECF2"; export OFFICIAL_VM
-LAPTOP="\\\\DESKTOP-02BI2KL"; export LAPTOP
-DEVBOX="$C_WIN\\Windows\\ServiceProfiles\\LocalService\\AppData\\Local"; export DEVBOX
+CDP1="\\\\DESKTOP-5MMAKOD"
+CDP2="\\\\DESKTOP-4HQ4UEA"
+MASTER="\\\\DESKTOP-CTKCQFE"
+RS1="\\\\DESKTOP-KDTTPVC"
+OFFICIAL="\\\\DESKTOP-NM3ECF2"
+LAPTOP="\\\\DESKTOP-02BI2KL"
+DEVBOX="$C_WIN\\Windows\\ServiceProfiles\\LocalService\\AppData\\Local"
 
 CDP_HOST_NAME="com.microsoft.cdp.CDPHost"
 CORTANA_NAME="com.microsoft.cortana"
@@ -49,9 +48,22 @@ declare -A app_name_keys=(
 )
 
 declare -A build_keys=(
-  [3p]="sdk_3p:assembleRelease sdk_3p:assembleDebug"
+  [1p]="sdk_1p:assembleDebug"
+  [1p_release]="sdk_1p:assembleRelease"
+  [3p]="sdk_3p:assembleDebug"
+  [3p_release]="sdk_3p:assembleRelease"
   [rome]="romanAppInternal:assembleDebug"
   [rome_release]="romanAppInternal:assembleRelease"
+)
+
+declare -A machine_keys=(
+  [cdp1]=$CDP1
+  [cdp2]=$CDP2
+  [master]=$MASTER
+  [rs1]=$RS1
+  [official]=$OFFICIAL
+  [laptop]=$LAPTOP
+  [devbox]=$DEVBOX
 )
 
 #### Android Viewing + Interaction - Private Functions ####
@@ -91,33 +103,34 @@ nuke () { _execute _app_nuke app_name_keys $1; }
 
 #### Storing Logs - Private Functions ####
 
-# Macro style for requiring at least 1 argument
-_REQUIRE_ARGS () { if [ $# -eq 0 ]; then echo "No arguments provided"; return 1; fi; return 0; }
-
 # Generate Date Time Stamp
 _dts() { date +%Y-%m-%d-%H-%M-%S; }
 
 # Create a directory with timestamp
-_dmkdir() { DDIR="$DDR_LOC/$(_dts)"; mkdir $DDIR && cd $DDIR && exp && return 0; }
+_dmkdir() { DDIR="$DDR_LOC/$(_dts)"; mkdir $DDIR && return 0; }
 
 # Copy the CDPTraces.log from the given machine
-_copy_log () { cp "$1\ConnectedDevicesPlatform\CDPTraces.log" "CDPTraces_PC.log"; }
+_copy_log_internal () { cp "$1\ConnectedDevicesPlatform\CDPTraces.log" "CDPTraces_PC.log"; }
 
-# Pull the log to the given application and given desktop directory log to a timestamp directory e.g. store_coa $CDP1_VM
-_store () { $1 $2 && _dmkdir && mv CDPTraces_android.log "$DDIR\CDPTraces_android.log" && if [ $# -eq 2 ]; then cd "$DDIR"; else $(_copy_log $3) && cd "$DDIR"; fi; }
+_copy_log () { _execute _copy_log_internal machine_keys $1 && return 0; }
+
+_mvlog () { mv $1.log "$DDIR\\$1.log" && return 0; }
 
 #### Storing Logs - Public Functions ####
 
 # $1: Name of VM/PC which has a shared directory containing CDPTraces.log
-store_log () { _REQUIRE_ARGS $@ && _dmkdir && $(_copy_log $1); }
+store_log () { _copy_log $1 && _dmkdir && _mvlog "CDPTraces_PC" && cd "$DDIR" && exp; }
 
+# Pull the log to the given application and given desktop directory log to a timestamp directory e.g. store_coa $CDP1_VM
 # $1: Name of application to pull from
 # $2: [Optional] Name of VM/PC which has a shared directory containing CDPTraces.log
-store() { _REQUIRE_ARGS $@ && _store pull_log $@; }
+store () { pull_log $1 && _dmkdir && _mvlog "CDPTraces_android" && cd "$DDIR" && exp && if [ $# -eq 2 ]; then $(_copy_log $2); fi; }
 
-#### Building Android ####
+#### Building Android - Private Functions ####
 
-_gradlew () { cd $CDP_1 && $GRADLEW $1; }
+_gradlew () { cd $CDP_1 && dos2unix gradlew && $GRADLEW $1; }
+
+#### Building Android - Public Functions ####
 
 build() { _execute _gradlew build_keys $1; }
 
