@@ -30,20 +30,29 @@ COA_BUILDS="$WORK/bug_files/coa_builds"
 
 GRADLEW="$CDP_1/gradlew"
 
-APP_NAMES="\n\
-- cdphost\n\
-- coa\n\
-- tdd\n\
-- rome\n\
-- rome_in\n\
-- xamarin\n\
-"
+declare -A app_keys=(
+  [cdphost]=$CDP_HOST
+  [coa]=$CORTANA
+  [tdd]=$TDDRUNNER
+  [rome]=$ROMAN_APP
+  [rome_in]=$ROMAN_APP_IN
+  [xamarin]=$XAMARIN_APP
+)
 
-BUILD_TYPES="\n\
-- 3p\n\
-- rome\n\
-- rome_release\n\
-"
+declare -A app_name_keys=(
+  [cdphost]=$CDP_HOST_NAME
+  [coa]=$CORTANA_NAME
+  [tdd]=$TDDRUNNER_NAME
+  [rome]=$ROMAN_APP_NAME
+  [rome_in]=$ROMAN_APP_IN_NAME
+  [xamarin]=$XAMARIN_APP_NAME
+)
+
+declare -A build_keys=(
+  [3p]="sdk_3p:assembleRelease sdk_3p:assembleDebug"
+  [rome]="romanAppInternal:assembleDebug"
+  [rome_release]="romanAppInternal:assembleRelease"
+)
 
 #### Android Viewing + Interaction - Private Functions ####
 
@@ -57,32 +66,6 @@ _app_stop () { $ADB shell am force-stop $1; }
 
 _app_nuke () { $ADB shell pm clear $1; }
 
-_exe_app()
-{
-    case $1 in
-        cdphost)  $2 $CDP_HOST && return 0;;
-        coa)      $2 $CORTANA && return 0;;
-        tdd)      $2 $TDDRUNNER && return 0;;
-        rome)     $2 $ROMAN_APP && return 0;;
-        rome_in)  $2 $ROMAN_APP_IN && return 0;;
-        xamarin)  $2 $XAMARIN_APP && return 0;;
-        * ) printf "Valid options are $APP_NAMES" && return 1;;
-    esac
-}
-
-_exe_app_name()
-{
-    case $1 in
-        cdphost)  $2 $CDP_HOST_NAME && return 0;;
-        coa)      $2 $CORTANA_NAME && return 0;;
-        tdd)      $2 $TDDRUNNER_NAME && return 0;;
-        rome)     $2 $ROMAN_APP_NAME && return 0;;
-        rome_in)  $2 $ROMAN_APP_IN_NAME && return 0;;
-        xamarin)  $2 $XAMARIN_APP_NAME && return 0;;
-        * ) printf "Valid options are $APP_NAMES" && return 1;;
-    esac
-}
-
 #### Android Viewing + Interaction - Public Functions ####
 
 ls_devices () { $ADB devices | grep "device$" | sed 's/ *device//g'; }
@@ -92,19 +75,19 @@ ls_device () { $ADB devices | grep "device$" | sed 's/ *device//g' | sed -n "$1"
 ls_apps () { $ADB ls sdcard/Android/data/; }
 
 # Delete the CDP log for the given app
-rm_log () { _exe_app $1 _app_rm_log; }
+rm_log () { _execute _app_rm_log app_keys $1; }
 
 # Pull the CDP log for the given app
-pull_log () { _exe_app $1 _app_pull_log; }
+pull_log () { _execute _app_pull_log app_keys $1; }
 
 # Pull the ConnectedDevicesPlatform directory for the given app
-pull_dir () { _exe_app $1 _app_pull_dir; }
+pull_dir () { _execute _app_pull_dir app_keys $1; }
 
 # Close given application
-stop () { _exe_app_name $1 _app_stop; }
+stop () { _execute _app_stop app_name_keys $1; }
 
 # Close app process and clear out all the stored data for given that app
-nuke () { _exe_app_name $1 _app_nuke; }
+nuke () { _execute _app_nuke app_name_keys $1; }
 
 #### Storing Logs - Private Functions ####
 
@@ -136,15 +119,7 @@ store() { _REQUIRE_ARGS $@ && _store pull_log $@; }
 
 _gradlew () { cd $CDP_1 && $GRADLEW $1; }
 
-build()
-{
-    case $1 in
-        3p)           _gradlew sdk_3p:assembleRelease sdk_3p:assembleDebug && return 0;;
-        rome)         _gradlew romanAppInternal:assembleDebug && return 0;;
-        rome_release) _gradlew romanAppInternal:assembleRelease && return 0;;
-        * ) printf "Valid options are $BUILD_TYPES" && return 1;;
-    esac
-}
+build() { _execute _gradlew build_keys $1; }
 
 deploy_3p () { $SCRIPTS/Deploy-Android-3p-SDK.cmd -iteration 1703 -network; }
 

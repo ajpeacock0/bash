@@ -43,30 +43,52 @@ USER_CDP_WIN="\"$C_WIN\\Users\\anpea\\AppData\\Local\\ConnectedDevicesPlatform\"
 SYS_CDP="$C/Windows/ServiceProfiles/LocalService/AppData/Local/ConnectedDevicesPlatform"
 USER_CDP="$C/Users/anpea/AppData/Local/ConnectedDevicesPlatform"
 
-OPEN_NAMES="\n\
-- xam_apk\n\
-- xam_dll\n\
-- sdk_aar\n\
-- rome_apk\n\
-- cdpsvc\n\
-- cdpusersvc\n\
-- anpea_dir\n\
-- drop\n\
-- xam_proj\n\
-- coa\n\
-- rome_proj\n\
-- cdp1\n\
-- cdp2\n\
-- cdpmaster\n\
-- work\n\
-- notes\n\
-- bugs\n\
-- home\n\
-- en\n\
-- en_cdp\n\
-- en_appservice
-- scripts
-"
+declare -A nav_keys=(
+  # Build files
+  [xam_apk]=$XAMARIN_APK
+  [xam_dll]=$XAMARIN_DLL
+  [sdk_aar]=$SDK_3P_AAR
+  [rome_apk]=$ROME_IN_APK
+  # System logs
+  [cdpsvc]=$SYS_CDP
+  [cdpusersvc]=$USER_CDP
+  # Network
+  [anpea_dir]=$ANPEA_DIR
+  [drop]=$ROME_DROP
+  [vms]=$VM_DIR
+  # Git repos
+  [xam_proj]=$XAMARIN
+  [coa]=$COA
+  [rome_proj]=$ROME_APP
+  [cdp1]=$CDP_1
+  [cdp2]=$CDP_2
+  [cdpmaster]=$CDP_MASTER
+  # notes
+  [work]=$WORK
+  [notes]=$NOTES
+  [bugs]=$BUG_FILES
+  [home]=$CYGWIN
+  # Enlistment
+  [en]="$F/enlistments"
+  [en_cdp]=$ENLISTMENT_CDP
+  [en_appservice]=$ENLISTMENT_APP_CONTRACT
+  # CDP
+  [scripts]=$SCRIPTS
+)
+
+declare -A script_keys=(
+  # Windows
+  [vm]="$VM_SETTINGS/aliases.pub"
+  [cmd]="$CMD_SETTINGS/aliases.pub"
+  # Bash
+  [inputrc]="$CYGWIN_WIN/.inputrc_custom"
+  [android]="$CYGWIN_WIN/android.bash"
+  [general]="$CYGWIN_WIN/general.bash"
+  [git]="$CYGWIN_WIN/git.bash"
+  [main]="$CYGWIN_WIN/main.bash"
+  [shared]="$CYGWIN_WIN/shared.bash"
+  [specific]="$CYGWIN_WIN/specific.bash"
+)
 
 #### CD ALIASES ####
 
@@ -74,42 +96,7 @@ alias cdp1="cd $CDP_1"
 alias cdp2="cd $CDP_2"
 alias master="cd $CDP_MASTER"
 
-_navigate()
-{
-    case $2 in
-        # Build files
-        xam_apk)       $1 $XAMARIN_APK && return 0;;
-        xam_dll)       $1 $XAMARIN_DLL && return 0;;
-        sdk_aar)       $1 $SDK_3P_AAR && return 0;;
-        rome_apk)      $1 $ROME_IN_APK && return 0;;
-        # System logs
-        cdpsvc)        $1 $SYS_CDP && return 0;;
-        cdpusersvc)    $1 $USER_CDP && return 0;;
-        # Network
-        anpea_dir)     $1 $ANPEA_DIR && return 0;;
-        drop)          $1 $ROME_DROP && return 0;;
-        vms)           $1 $VM_DIR && return 0;;
-        # Git repos
-        xam_proj)      $1 $XAMARIN && return 0;;
-        coa)           $1 $COA && return 0;;
-        rome_proj)      $1 $ROME_APP && return 0;;
-        # notes
-        cdp1)          $1 $CDP_1 && return 0;;
-        cdp2)          $1 $CDP_2 && return 0;;
-        cdpmaster)     $1 $CDP_MASTER && return 0;;
-        work)          $1 $WORK && return 0;;
-        notes)         $1 $NOTES && return 0;;
-        bugs)          $1 $BUG_FILES && return 0;;
-        home)          $1 $CYGWIN && return 0;;
-        # Enlistment
-        en)            $1 "$F/enlistments" && return 0;;
-        en_cdp)        $1 $ENLISTMENT_CDP && return 0;;
-        en_appservice) $1 $ENLISTMENT_APP_CONTRACT && return 0;;
-        # CDP
-        scripts)       $1 $SCRIPTS && return 0;;
-        * ) printf "Valid options are $OPEN_NAMES" && return 1;;
-    esac
-}
+_navigate() { _execute $1 nav_keys $2; }
 
 # Open a explorer window at the path name - op = OPen
 op() { _navigate cygstart $1; }
@@ -118,23 +105,7 @@ op() { _navigate cygstart $1; }
 go() { _navigate cd $1; }
 
 # Check Script
-cs()
-{
-    case $1 in
-        # Windows
-        vm)       "$SUBL_FUNC" "$VM_SETTINGS/aliases.pub" && return 0;;
-        cmd)      "$SUBL_FUNC" "$CMD_SETTINGS/aliases.pub" && return 0;;
-        # Bash
-        inputrc)  "$SUBL_FUNC"" $CYGWIN_WIN/.inputrc_custom"  && return 0;;
-        android)  "$SUBL_FUNC" "$CYGWIN_WIN/android.bash"  && return 0;;
-        general)  "$SUBL_FUNC" "$CYGWIN_WIN/general.bash"  && return 0;;
-        git)      "$SUBL_FUNC" "$CYGWIN_WIN/git.bash"  && return 0;;
-        main)     "$SUBL_FUNC" "$CYGWIN_WIN/main.bash"  && return 0;;
-        shared)   "$SUBL_FUNC" "$CYGWIN_WIN/shared.bash"  && return 0;;
-        specific) "$SUBL_FUNC" "$CYGWIN_WIN/specific.bash"  && return 0;;
-        * ) printf "No valid alias option given." && return 1;;
-    esac
-}
+cs() { _execute "$SUBL_FUNC" script_keys $1; }
 
 #### PROGRAM ALIASES ####
 

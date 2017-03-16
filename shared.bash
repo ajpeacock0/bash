@@ -31,3 +31,28 @@ WORK_WIN="$C_WIN/work_files"
 
 # CDP scripts
 SCRIPTS="$CDP_1/tools/scripts"
+
+_print_array()
+{
+    local -n name=$1
+    printf "Valid options are"
+    for i in "${!name[@]}"
+    do
+        printf "\n- $i"
+    done
+}
+
+# $1 is the action to perform
+# $2 is the associate array
+# $3 is the key / selection
+_execute()
+{
+    local -n keys=$2
+
+    if [ $# -eq 3 ] && [ ${keys[$3]+exists} ]
+    then
+        "$1" ${keys[$3]} && return 0
+    else 
+        _print_array keys && return 1
+    fi
+}
