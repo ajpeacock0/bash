@@ -27,8 +27,8 @@ mkcd () { mkdir -p $1; cd $1; }
 # Shortcut for up directory
 alias ..="cd .."
 
-# open an explorer window in current directory
-alias exp="explorer ."
+# Opens the directory in Windows or Unix format. If no argument is given, open the current directory
+exp () { if [ $# -eq 1 ]; then cygstart $1; else cygstart .; fi; }
 
 # Display the space available on the HD
 alias space="df -h"

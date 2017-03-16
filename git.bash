@@ -4,8 +4,11 @@ FORMAT="%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(ob
 
 #### General ####
 
-# Improved git log
+# Git log graph
 alias lg="git log --graph --all --decorate"
+
+# Regular git log
+alias log="git log"
 
 # Shortcut + verbose
 alias fe="git fetch -v"
@@ -53,7 +56,7 @@ alias updatesub="git submodule update --recursive --init"
 alias gmv="git mv -f "
 
 # Delete all non-commited files (- etags file)
-alias nuke="git clean -fdx -e ".tags" -e \".tags_sorted_by_file\""
+alias gnuke="git clean -fdx -e ".tags" -e \".tags_sorted_by_file\""
 
 #### Commitments ####
 
@@ -87,7 +90,7 @@ undo_last() { reset && discard; }
 conf_ls() { git diff --name-only --diff-filter=U; }
 
 # open conflicted files in sublime
-alias conf_subl="conf_ls && conf_ls xargs $SUBL_ALIAS"
+conf_subl() { conf_ls && conf_ls | xargs "$SUBL_FUNC"; }
 
 # add the conflicted files after you fix them
 conf_add() { git diff --name-only --diff-filter=U | xargs git add; }
@@ -107,7 +110,7 @@ alias remotebr="git branch -a"
 alias switch="git checkout "
 
 # Rename a branch
-alias mvbranch="git branch -m "
+alias mvbr="git branch -m "
 
 # Forces a deletion on the branch
 rmbr() { git branch -D $1; }
@@ -178,8 +181,8 @@ logf () { git log --follow -p $1; }
 # view commit log with changes of given file in sublime
 logfsubl () { git log --follow -p $1 > $1.log && "$SUBL_FUNC" $1.log && rm $1.log; }
 
-# grep the history of the given file
-greph () { git rev-list --all | xargs git grep $1; }
+# Perform a "git grep" including the history of the files
+greph () { git rev-list --all | xargs git grep "$1"; }
 
 # view reflog log of given file
 alias reflogf="git rev-list --all "
