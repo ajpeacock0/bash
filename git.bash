@@ -44,7 +44,7 @@ alias skip="git rebase --skip"
 alias st="git status"
 
 # Shortcut for cherry pick
-alias gcp="git cherry-pick"
+alias gcp="git cherry-pick -x"
 
 # Shortcut for review
 alias review="git review"
@@ -181,9 +181,6 @@ logf () { git log --follow -p $1; }
 # view commit log with changes of given file in sublime
 logfsubl () { git log --follow -p $1 > $1.log && "$SUBL_FUNC" $1.log && rm $1.log; }
 
-# Perform a "git grep" including the history of the files
-greph () { git rev-list --all | xargs git grep "$1"; }
-
 # view reflog log of given file
 alias reflogf="git rev-list --all "
 
@@ -215,3 +212,6 @@ cdiff () { git diff $1^ $1; }
 
 # view all files given author has touched
 gtouch () { git log --no-merges --stat --author="$1" --name-only --pretty=format:"" | sort -u; }
+
+# Perform a "git grep" including the history of the files
+greph () { git rev-list --all | xargs git grep "$1"; }

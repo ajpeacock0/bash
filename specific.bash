@@ -5,16 +5,17 @@ ENLISTMENT_CDP="$F/enlistments/onecoreuap/windows/cdp"
 ENLISTMENT_APP_CONTRACT="$F/enlistments/onecoreuap/base/appmodel/AppContracts"
 
 # Git Repo locations of importanace
-COA="$C/git_repos/CortanaAndroid"
-TDD="$C/git_repos/cdp/build/onecorefast/x64/debug/tests"
-ROME_APP="$C/git_repos/cdp/samples/romanapp/android"
-XAMARIN="$C/git_repos/project-rome/xamarin"
+COA="$GIT_REPOS/CortanaAndroid"
+TDD="$CDP_1/build/onecorefast/x64/debug/tests"
+ROME_APP="$CDP_1/samples/romanapp/android"
+XAMARIN_APP="$CDP_1/samples/xamarinsample"
+XAMARIN_PROJ="$CDP_1/sdk/xamarin"
 
 # APK locations
-XAMARIN_APK="$XAMARIN/samples/ConnectedDevices.Xamarin.Droid.Sample/ConnectedDevices.Xamarin.Droid.Sample/bin/x86/Debug"
+XAMARIN_APK="$XAMARIN_APP/ConnectedDevices.Xamarin.Droid.Sample/bin/"
 ROME_IN_APK="$ROME_APP/internal/build/outputs/apk"
-SDK_3P_AAR="$C/git_repos/cdp/sdk/android/3p/build/outputs/aar"
-XAMARIN_DLL="$XAMARIN/src/ConnectedDevices.Xamarin.Droid/bin/x86/Debug"
+SDK_3P_AAR="$CDP_1/sdk/android/3p/build/outputs/aar"
+XAMARIN_DLL="$XAMARIN_PROJ/ConnectedDevices.Xamarin.Droid/bin"
 
 # Network directories
 VM_DIR="//winbuilds/release/RS_ONECORE_DEP_ACI_CDP/"
@@ -25,7 +26,7 @@ CURRENT_ROME_DROP="$ROME_DROP/Rome_1703"
 
 # Note files directories
 NOTES="$C/notes/"
-BUG_FILES="$C/work_files/bug_files"
+BUG_FILES="$WORK/bug_files"
 
 VM_SETTINGS="$WORK_WIN/vm_settings"
 CMD_SETTINGS="$WORK_WIN/cmd.exe_settings"
@@ -35,6 +36,7 @@ MY_JAVA_HOME="$C/Program\ Files/Java/jdk1.8.0_121"
 JAVAC="$MY_JAVA_HOME/bin/javac.exe"
 JAVAP="$MY_JAVA_HOME/bin/javap.exe"
 VS="$C/Program\ Files\ \(x86\)/Microsoft\ Visual\ Studio\ 14.0/Common7/IDE/devenv.exe"
+NUGET="$C/tools/NuGet/nuget.exe"
 
 # Local log directories
 SYS_CDP_WIN="\"$C_WIN\\Windows\\ServiceProfiles\\LocalService\\AppData\\Local\\ConnectedDevicesPlatform\""
@@ -57,12 +59,15 @@ declare -A nav_keys=(
   [drop]=$ROME_DROP
   [vms]=$VM_DIR
   # Git repos
-  [xam_proj]=$XAMARIN
+  [xam_proj]=$XAMARIN_PROJ
+  [xam_app]=$XAMARIN_APP
   [coa]=$COA
-  [rome_proj]=$ROME_APP
+  [rome_app]=$ROME_APP
   [cdp1]=$CDP_1
   [cdp2]=$CDP_2
   [cdpmaster]=$CDP_MASTER
+  [project-rome]="$GIT_REPOS/project-rome/project-rome-for-android-(preview-release)"
+  [pingpong]="$GIT_REPOS/CDPPingPong"
   # notes
   [work]=$WORK
   [notes]=$NOTES
@@ -75,6 +80,8 @@ declare -A nav_keys=(
   # CDP
   [scripts]=$SCRIPTS
 )
+
+
 
 declare -A script_keys=(
   # Windows
@@ -90,11 +97,7 @@ declare -A script_keys=(
   [specific]="$CYGWIN_WIN/specific.bash"
 )
 
-#### CD ALIASES ####
-
-alias cdp1="cd $CDP_1"
-alias cdp2="cd $CDP_2"
-alias master="cd $CDP_MASTER"
+#### Navigation ALIASES ####
 
 _navigate() { _execute $1 nav_keys $2; }
 
@@ -110,11 +113,15 @@ cs() { _execute "$SUBL_FUNC" script_keys $1; }
 #### PROGRAM ALIASES ####
 
 alias adb="$ADB"
+msbuild () { "$MSBUILD" $@; }
 alias subl="$SUBL_ALIAS"
+nuget () { "$NUGET" $@; }
 alias javac="$JAVAC"
 alias javap="$JAVAP"
 alias scons="$C/Python27/scons-2.4.1.bat "
 alias err="//tkfiltoolbox/tools/839/1.7.2/x86/err "
+alias xamarin_sample="cygstart $XAMARIN_APP/ConnectedDevices.Xamarin.Droid.Sample.sln"
+alias xamarin_sdk="cygstart $XAMARIN_PROJ/ConnectedDevices.sln"
 
 # Windows style newline characters can cause issues in Cygwin in certain files.
 # Replacement for the command with the same. Removes trailing \r character

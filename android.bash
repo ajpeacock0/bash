@@ -13,7 +13,7 @@ CORTANA_NAME="com.microsoft.cortana"
 TDDRUNNER_NAME="com.microsoft.tddrunner"
 ROMAN_APP_NAME="com.microsoft.romanapp"
 ROMAN_APP_IN_NAME="com.microsoft.romanappinternal"
-XAMARIN_APP_NAME="ConnectedDevices.Xamarin"
+XAMARIN_APP_NAME="com.microsoft.romanapp.xamarin"
 
 APP_DIR="sdcard/Android/data"
 
@@ -29,13 +29,16 @@ COA_BUILDS="$WORK/bug_files/coa_builds"
 
 GRADLEW="$CDP_1/gradlew"
 
+AAR_SRC_ARR="$CDP_1\sdk\android\3p\build\outputs\aar\connecteddevices-sdk-armv7-0.2.0-release.aar"
+AAR_DEST_ARR="$CDP_1\sdk\xamarin\ConnectedDevices.Xamarin.Droid\Jars\connecteddevices-sdk-armv7-externalRelease.aar"
+
 declare -A app_keys=(
   [cdphost]=$CDP_HOST
   [coa]=$CORTANA
   [tdd]=$TDDRUNNER
   [rome]=$ROMAN_APP
   [rome_in]=$ROMAN_APP_IN
-  [xamarin]=$XAMARIN_APP
+  [xam]=$XAMARIN_APP
 )
 
 declare -A app_name_keys=(
@@ -44,7 +47,8 @@ declare -A app_name_keys=(
   [tdd]=$TDDRUNNER_NAME
   [rome]=$ROMAN_APP_NAME
   [rome_in]=$ROMAN_APP_IN_NAME
-  [xamarin]=$XAMARIN_APP_NAME
+  [xam]=$XAMARIN_APP_NAME
+
 )
 
 declare -A build_keys=(
@@ -54,6 +58,19 @@ declare -A build_keys=(
   [3p_release]="sdk_3p:assembleRelease"
   [rome]="romanAppInternal:assembleDebug"
   [rome_release]="romanAppInternal:assembleRelease"
+  [rome_ex]=":romanApp:assembleDebug"
+  [rome_ex_release]=":romanApp:assembleRelease"
+)
+
+
+ # msbuild.exe HelloWorld.csproj /p:Configuration=Release /t:PackageForAndroid ** but the apk which is generating is not running ,it
+# /p:Configuration=Release
+
+declare -A xam_keys=(
+  # this doesn't work. You need to re-build to have changes take affect. e.g. Try changing the name of RemoteSystemAdded and see if the app can/cannot be built.
+  [dll]="/t:Clean,Build $CDP_1_WIN\sdk\xamarin\ConnectedDevices.Xamarin.Droid\ConnectedDevices.Xamarin.Droid.csproj"
+  # [dll_release]="/p:Configuration=Release C:\git_repos\cdp\sdk\xamarin\ConnectedDevices.Xamarin.Droid\ConnectedDevices.Xamarin.Droid.csproj"
+  [app]="/t:SignAndroidPackage $CDP_1_WIN\samples\xamarinsample\ConnectedDevices.Xamarin.Droid.Sample\ConnectedDevices.Xamarin.Droid.Sample.csproj"
 )
 
 declare -A machine_keys=(
@@ -84,7 +101,7 @@ ls_devices () { $ADB devices | grep "device$" | sed 's/ *device//g'; }
 
 ls_device () { $ADB devices | grep "device$" | sed 's/ *device//g' | sed -n "$1"p; }
 
-ls_apps () { $ADB ls sdcard/Android/data/; }
+ls_apps () { $ADB ls $APP_DIR; }
 
 # Delete the CDP log for the given app
 rm_log () { _execute _app_rm_log app_keys $1; }
@@ -130,13 +147,25 @@ store () { pull_log $1 && _dmkdir && _mvlog "CDPTraces_android" && cd "$DDIR" &&
 
 _gradlew () { cd $CDP_1 && dos2unix gradlew && $GRADLEW $1; }
 
+_msbuild () { "$MSBUILD" $1; }
+
 #### Building Android - Public Functions ####
 
+# Using gradle, builds the given task
 build() { _execute _gradlew build_keys $1; }
 
+# Using MSBuild, build the given task
+build_xam() { _execute _msbuild xam_keys $1; }
+
+# Package all 3P SDK files in a local directory
+package_3p () { $SCRIPTS/Deploy-Android-3p-SDK.cmd -iteration 1703; }
+
+# Package all 3P SDK files in a network directory
 deploy_3p () { $SCRIPTS/Deploy-Android-3p-SDK.cmd -iteration 1703 -network; }
 
-package_3p () { build_3p && build_rome_release && deploy_3p; }
+cp_aar () { cp $AAR_SRC_ARR $AAR_DEST_ARR; }
+
+prep_xam () { build 3p_release && cp_aar && build_xam dll; }
 
 #### TDD commands ####
 
