@@ -8,6 +8,7 @@ ENLISTMENT_APP_CONTRACT="$F/enlistments/onecoreuap/base/appmodel/AppContracts"
 COA="$GIT_REPOS/CortanaAndroid"
 TDD="$CDP_1/build/onecorefast/x64/debug/tests"
 ROME_APP="$CDP_1/samples/romanapp/android"
+ROME_IN_APK="$CDP_1/samples/romanapp/android/internal/build/outputs/apk"
 XAMARIN_APP="$CDP_1/samples/xamarinsample"
 XAMARIN_PROJ="$CDP_1/sdk/xamarin"
 
@@ -18,11 +19,12 @@ SDK_3P_AAR="$CDP_1/sdk/android/3p/build/outputs/aar"
 XAMARIN_DLL="$XAMARIN_PROJ/ConnectedDevices.Xamarin.Droid/bin"
 
 # Network directories
-VM_DIR="//winbuilds/release/RS_ONECORE_DEP_ACI_CDP/"
+VM_DIR="//winbuilds/release/RS_ONECORE_DEP_ACI/"
 RELEASE_VM_DIR="//winbuilds/release/RS2_RELEASE/"
 ANPEA_DIR="//redmond/osg/release/DEP/CDP/anpea"
 ROME_DROP="//redmond/osg/release/dep/CDP/V3Partners"
 CURRENT_ROME_DROP="$ROME_DROP/Rome_1703"
+
 
 # Note files directories
 NOTES="$C/notes/"
@@ -31,12 +33,20 @@ BUG_FILES="$WORK/bug_files"
 VM_SETTINGS="$WORK_WIN/vm_settings"
 CMD_SETTINGS="$WORK_WIN/cmd.exe_settings"
 
+# Secret
+SECRET_HOME="D:\work_files\Secrets"
+CDP_ROME_SECRET="$SECRET_HOME\cdp_rome"
+GITHUB_ROME_SECRET="$SECRET_HOME\github_rome"
+XAM_SECRET="$SECRET_HOME\Xamarin"
+
 # Application directories
 MY_JAVA_HOME="$C/Program\ Files/Java/jdk1.8.0_121"
 JAVAC="$MY_JAVA_HOME/bin/javac.exe"
 JAVAP="$MY_JAVA_HOME/bin/javap.exe"
+JAVAH="$MY_JAVA_HOME/bin/javah.exe"
 VS="$C/Program\ Files\ \(x86\)/Microsoft\ Visual\ Studio\ 14.0/Common7/IDE/devenv.exe"
 NUGET="$C/tools/NuGet/nuget.exe"
+CMAKE="$C/Users/anpea/AppData/Local/Android/sdk/cmake/3.6.3155560/bin/cmake.exe"
 
 # Local log directories
 SYS_CDP_WIN="\"$C_WIN\\Windows\\ServiceProfiles\\LocalService\\AppData\\Local\\ConnectedDevicesPlatform\""
@@ -81,8 +91,6 @@ declare -A nav_keys=(
   [scripts]=$SCRIPTS
 )
 
-
-
 declare -A script_keys=(
   # Windows
   [vm]="$VM_SETTINGS/aliases.pub"
@@ -118,7 +126,10 @@ alias subl="$SUBL_ALIAS"
 nuget () { "$NUGET" $@; }
 alias javac="$JAVAC"
 alias javap="$JAVAP"
+alias javah="$JAVAH"
 alias scons="$C/Python27/scons-2.4.1.bat "
+alias cmake="$CMAKE"
+
 alias err="//tkfiltoolbox/tools/839/1.7.2/x86/err "
 alias xamarin_sample="cygstart $XAMARIN_APP/ConnectedDevices.Xamarin.Droid.Sample.sln"
 alias xamarin_sdk="cygstart $XAMARIN_PROJ/ConnectedDevices.sln"
@@ -127,6 +138,16 @@ alias xamarin_sdk="cygstart $XAMARIN_PROJ/ConnectedDevices.sln"
 # Replacement for the command with the same. Removes trailing \r character
 # that causes the error `'\r': command not found`
 dos2unix () { sed -i 's/\r$//' $1; }
+
+#### Restoring CDP Secrets ####
+
+_cp_secret () { my_dir=`cat "$1"` && cp -r "$2" $my_dir; }
+
+_cp_secrets_1 () { _cp_secret "$1\path.txt" "$1\Secrets.java"; }
+_cp_secrets_2 () { _cp_secret "$1\path.txt" "$1\Secrets.java"; }
+_cp_secrets_3 () { _cp_secret "$1\path.txt" "$1\Secrets.cs"; }
+
+cp_secrets () { _cp_secrets_1 "$CDP_ROME_SECRET" && _cp_secrets_2 "$GITHUB_ROME_SECRET" && _cp_secrets_3 "$XAM_SECRET"; }
 
 #### CDP Traces ####
 
@@ -146,7 +167,7 @@ alias user_log="$SUBL_ALIAS $USER_CDP_WIN\\\\CDPTraces.log"
 
 #### Clearing / Moving build files ####
 
-clean_android () { rm -rf "$CDP_1/core/android/build" && rm -rf "$CDP_1/sdk/android/build" && rm -rf "$CDP_1/samples/CDPHost/android/app/build";  }
+clean_android () { rm -rf "$CDP_1/core/android/build" && rm -rf "$CDP_1/sdk/android/build" && rm -rf "$CDP_1/samples/CDPHost/android/app/build" && rm -rf "$CDP_1/samples/romanapp/android/internal/build";  }
 
 clean_cdphost () { rm -rf "$CDP_1/samples/CDPHost/android/app/build";  }
 

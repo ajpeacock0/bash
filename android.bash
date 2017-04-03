@@ -32,11 +32,13 @@ GRADLEW="$CDP_1/gradlew"
 AAR_SRC_ARR="$CDP_1\sdk\android\3p\build\outputs\aar\connecteddevices-sdk-armv7-0.2.0-release.aar"
 AAR_DEST_ARR="$CDP_1\sdk\xamarin\ConnectedDevices.Xamarin.Droid\Jars\connecteddevices-sdk-armv7-externalRelease.aar"
 
+ROME_IN_APK="D:\git_repos\cdp\samples\romanapp\android\internal\build\outputs\apk\romanAppInternal-armv7-debug.apk"
+
 declare -A app_keys=(
   [cdphost]=$CDP_HOST
   [coa]=$CORTANA
   [tdd]=$TDDRUNNER
-  [rome]=$ROMAN_APP
+  [rome_ex]=$ROMAN_APP
   [rome_in]=$ROMAN_APP_IN
   [xam]=$XAMARIN_APP
 )
@@ -45,10 +47,9 @@ declare -A app_name_keys=(
   [cdphost]=$CDP_HOST_NAME
   [coa]=$CORTANA_NAME
   [tdd]=$TDDRUNNER_NAME
-  [rome]=$ROMAN_APP_NAME
+  [rome_ex]=$ROMAN_APP_NAME
   [rome_in]=$ROMAN_APP_IN_NAME
   [xam]=$XAMARIN_APP_NAME
-
 )
 
 declare -A build_keys=(
@@ -56,15 +57,22 @@ declare -A build_keys=(
   [1p_release]="sdk_1p:assembleRelease"
   [3p]="sdk_3p:assembleDebug"
   [3p_release]="sdk_3p:assembleRelease"
-  [rome]="romanAppInternal:assembleDebug"
-  [rome_release]="romanAppInternal:assembleRelease"
+  [rome_in]="romanAppInternal:assembleDebug"
+  [rome_in_release]="romanAppInternal:assembleRelease"
   [rome_ex]=":romanApp:assembleDebug"
   [rome_ex_release]=":romanApp:assembleRelease"
+  [wnsping]=":wnspingtest:assembleDebug"
+  [wnsping_release]=":wnspingtest:assembleRelease"
+  [cdphost]="cdphost:assembleDebug"
+  [cdphost_release]="cdphost:assembleRelease"
 )
 
-
- # msbuild.exe HelloWorld.csproj /p:Configuration=Release /t:PackageForAndroid ** but the apk which is generating is not running ,it
-# /p:Configuration=Release
+declare -A clean_keys=(
+  [3p]="$CDP_1/sdk/android/3p/build" 
+  [cdphost]="$CDP_1/samples/CDPHost/android/app/build" 
+  [rome_in]="$CDP_1/samples/romanapp/android/internal/build"
+  [rome_ex]="$CDP_1/samples/romanapp/android/app/build"
+)
 
 declare -A xam_keys=(
   # this doesn't work. You need to re-build to have changes take affect. e.g. Try changing the name of RemoteSystemAdded and see if the app can/cannot be built.
@@ -83,6 +91,12 @@ declare -A machine_keys=(
   [devbox]=$DEVBOX
 )
 
+declare -A install_keys=(
+  [rome_in]=$ROME_IN_APK
+  # [rome_ex]=$CDP2
+  # [xam]=$MASTER
+)
+
 #### Android Viewing + Interaction - Private Functions ####
 
 _app_rm_log () { $ADB shell rm $1/CDPTraces.log; }
@@ -91,7 +105,9 @@ _app_pull_log () { $ADB pull $1/CDPTraces.log CDPTraces_android.log; }
 
 _app_pull_dir () { $ADB pull $1 ConnectedDevicesPlatform_android; }
 
-_app_stop () { $ADB shell am force-stop $1; }
+_app_launch () { $ADB shell monkey -p $1 -c android.intent.category.LAUNCHER 1; }
+
+_app_close () { $ADB shell am force-stop $1; }
 
 _app_nuke () { $ADB shell pm clear $1; }
 
@@ -112,8 +128,11 @@ pull_log () { _execute _app_pull_log app_keys $1; }
 # Pull the ConnectedDevicesPlatform directory for the given app
 pull_dir () { _execute _app_pull_dir app_keys $1; }
 
+# Open given application
+launch () { _execute _app_launch app_name_keys $1; }
+
 # Close given application
-stop () { _execute _app_stop app_name_keys $1; }
+close () { _execute _app_close app_name_keys $1; }
 
 # Close app process and clear out all the stored data for given that app
 nuke () { _execute _app_nuke app_name_keys $1; }
@@ -149,6 +168,10 @@ _gradlew () { cd $CDP_1 && dos2unix gradlew && $GRADLEW $1; }
 
 _msbuild () { "$MSBUILD" $1; }
 
+_clean () {  rm -rf $1; }
+
+_install () { $ADB install -r $1; }
+
 #### Building Android - Public Functions ####
 
 # Using gradle, builds the given task
@@ -157,15 +180,34 @@ build() { _execute _gradlew build_keys $1; }
 # Using MSBuild, build the given task
 build_xam() { _execute _msbuild xam_keys $1; }
 
+# Removes all files under build dirs
+clean() { _execute _clean clean_keys $1; }
+
+# Install the app's APK using ADB
+adb_in() { close $1 && _execute _install install_keys $1 && launch $1; }
+
 # Package all 3P SDK files in a local directory
 package_3p () { $SCRIPTS/Deploy-Android-3p-SDK.cmd -iteration 1703; }
 
 # Package all 3P SDK files in a network directory
 deploy_3p () { $SCRIPTS/Deploy-Android-3p-SDK.cmd -iteration 1703 -network; }
 
+# Package all 3P SDK files in a local directory
+package_1p () { $SCRIPTS/Deploy-Android-1p-SDK.cmd -iteration 1703; }
+
+# Package all 3P SDK files in a network directory
+deploy_1p () { $SCRIPTS/Deploy-Android-1p-SDK.cmd -iteration 1703 -network; }
+
 cp_aar () { cp $AAR_SRC_ARR $AAR_DEST_ARR; }
 
 prep_xam () { build 3p_release && cp_aar && build_xam dll; }
+
+CON_DEV_DIR="D:\git_repos\cdp\sdk\android\3p\build\intermediates\classes\debug\com\microsoft\connecteddevices"
+CDP_JNI_DIR="D:\git_repos\cdp\sdk\android\jni"
+JNI_CLASSPATH="D:\git_repos\cdp\sdk\android\3p\build\intermediates\classes\debug;C:\Program Files (x86)\Android\android-sdk\platforms\android-22\android.jar"
+JNI_CLASS="PlatformInternal"
+
+build_jni () { cd "$CON_DEV_DIR" && "$JAVAH" -v -classpath "$JNI_CLASSPATH" com.microsoft.connecteddevices.$JNI_CLASS && cp "$CON_DEV_DIR\com_microsoft_connecteddevices_$JNI_CLASS.h" "$CDP_JNI_DIR\com_microsoft_connecteddevices_$JNI_CLASS.h"; }
 
 #### TDD commands ####
 

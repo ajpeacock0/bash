@@ -8,7 +8,7 @@ FORMAT="%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(ob
 alias lg="git log --graph --all --decorate"
 
 # Regular git log
-alias log="git log"
+alias log="git log --name-status"
 
 # Shortcut + verbose
 alias fe="git fetch -v"
@@ -57,6 +57,9 @@ alias gmv="git mv -f "
 
 # Delete all non-commited files (- etags file)
 alias gnuke="git clean -fdx -e ".tags" -e \".tags_sorted_by_file\""
+
+# Push to origin HEAD with force
+alias submit="git push origin +HEAD"
 
 #### Commitments ####
 
@@ -169,6 +172,8 @@ rm_od ()
       fi
     done
 }
+
+alias reorder="git rebase -i HEAD~5"
 
 #### Given File Change ####
 
