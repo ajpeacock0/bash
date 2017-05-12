@@ -25,20 +25,32 @@ alias gpop="git stash apply"
 # Show the content of the top change in stash. gss = Git Stash Show
 alias gss="git stash show -p"
 
-# Shortcut for git stash drop
-alias gsd="git stash drop"
+# Shortcut for git stash drop = Git Stash ReMove
+alias gsrm="git stash drop"
 
-# Git stash list files changed
+# Git stash list files changed = Git Stash List
 alias gsl="git stash show"
 
+# List the dates the stashes were created = Git Stash Date
+alias gsd="git stash list --date=local"
+
 # Shortcut for rebase continue 
-alias cont="git rebase --continue"
+alias cont_re="git rebase --continue"
 
 # Shortcut for rebase abort 
-alias abort="git rebase --abort"
+alias abort_re="git rebase --abort"
 
 # Shortcut for rebase skip 
-alias skip="git rebase --skip"
+alias skip_re="git rebase --skip"
+
+# Shortcut for cherry-pick continue 
+alias cont_cp="git cherry-pick --continue"
+
+# Shortcut for cherry-pick abort 
+alias abort_cp="git cherry-pick --abort"
+
+# Shortcut for cherry-pick skip 
+alias skip_cp="git cherry-pick --skip"
 
 # Shortcut for status
 alias st="git status"
@@ -55,7 +67,7 @@ alias updatesub="git submodule update --recursive --init"
 # Rename a file, normally case differences in git name to local name
 alias gmv="git mv -f "
 
-# Delete all non-commited files (- etags file)
+# Delete all non-commited files (- etags file) TODO: follow up with a `cp_secrets`
 alias gnuke="git clean -fdx -e ".tags" -e \".tags_sorted_by_file\""
 
 # Push to origin HEAD with force
@@ -174,6 +186,9 @@ rm_od ()
 }
 
 alias reorder="git rebase -i HEAD~5"
+
+# View what commits have not been checked into master
+cl_br() { git log master.."$1"; }
 
 #### Given File Change ####
 

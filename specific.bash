@@ -6,6 +6,8 @@ ENLISTMENT_APP_CONTRACT="$F/enlistments/onecoreuap/base/appmodel/AppContracts"
 
 # Git Repo locations of importanace
 COA="$GIT_REPOS/CortanaAndroid"
+PROJECT_ROME_GITHUB="$GIT_REPOS/project-rome"
+CDP_PINGPONG="$GIT_REPOS/CDPPingPong"
 TDD="$CDP_1/build/onecorefast/x64/debug/tests"
 ROME_APP="$CDP_1/samples/romanapp/android"
 ROME_IN_APK="$CDP_1/samples/romanapp/android/internal/build/outputs/apk"
@@ -25,7 +27,6 @@ ANPEA_DIR="//redmond/osg/release/DEP/CDP/anpea"
 ROME_DROP="//redmond/osg/release/dep/CDP/V3Partners"
 CURRENT_ROME_DROP="$ROME_DROP/Rome_1703"
 
-
 # Note files directories
 NOTES="$C/notes/"
 BUG_FILES="$WORK/bug_files"
@@ -36,6 +37,7 @@ CMD_SETTINGS="$WORK_WIN/cmd.exe_settings"
 # Secret
 SECRET_HOME="D:\work_files\Secrets"
 CDP_ROME_SECRET="$SECRET_HOME\cdp_rome"
+CDP_ROME_IN_SECRET="$SECRET_HOME\cdp_rome_in"
 GITHUB_ROME_SECRET="$SECRET_HOME\github_rome"
 XAM_SECRET="$SECRET_HOME\Xamarin"
 
@@ -44,6 +46,7 @@ MY_JAVA_HOME="$C/Program\ Files/Java/jdk1.8.0_121"
 JAVAC="$MY_JAVA_HOME/bin/javac.exe"
 JAVAP="$MY_JAVA_HOME/bin/javap.exe"
 JAVAH="$MY_JAVA_HOME/bin/javah.exe"
+KEYTOOL="$MY_JAVA_HOME/jre/bin/keytool.exe"
 VS="$C/Program\ Files\ \(x86\)/Microsoft\ Visual\ Studio\ 14.0/Common7/IDE/devenv.exe"
 NUGET="$C/tools/NuGet/nuget.exe"
 CMAKE="$C/Users/anpea/AppData/Local/Android/sdk/cmake/3.6.3155560/bin/cmake.exe"
@@ -76,8 +79,8 @@ declare -A nav_keys=(
   [cdp1]=$CDP_1
   [cdp2]=$CDP_2
   [cdpmaster]=$CDP_MASTER
-  [project-rome]="$GIT_REPOS/project-rome/project-rome-for-android-(preview-release)"
-  [pingpong]="$GIT_REPOS/CDPPingPong"
+  [github]=$PROJECT_ROME_GITHUB
+  [pingpong]=$CDP_PINGPONG
   # notes
   [work]=$WORK
   [notes]=$NOTES
@@ -127,6 +130,7 @@ nuget () { "$NUGET" $@; }
 alias javac="$JAVAC"
 alias javap="$JAVAP"
 alias javah="$JAVAH"
+alias keytool="$KEYTOOL"
 alias scons="$C/Python27/scons-2.4.1.bat "
 alias cmake="$CMAKE"
 
@@ -144,10 +148,11 @@ dos2unix () { sed -i 's/\r$//' $1; }
 _cp_secret () { my_dir=`cat "$1"` && cp -r "$2" $my_dir; }
 
 _cp_secrets_1 () { _cp_secret "$1\path.txt" "$1\Secrets.java"; }
-_cp_secrets_2 () { _cp_secret "$1\path.txt" "$1\Secrets.java"; }
-_cp_secrets_3 () { _cp_secret "$1\path.txt" "$1\Secrets.cs"; }
+_cp_secrets_2 () { _cp_secret "$1\path.txt" "$1\gradle.properties"; }
+_cp_secrets_3 () { _cp_secret "$1\path.txt" "$1\Secrets.java"; }
+_cp_secrets_4 () { _cp_secret "$1\path.txt" "$1\Secrets.cs"; }
 
-cp_secrets () { _cp_secrets_1 "$CDP_ROME_SECRET" && _cp_secrets_2 "$GITHUB_ROME_SECRET" && _cp_secrets_3 "$XAM_SECRET"; }
+cp_secrets () { _cp_secrets_1 "$CDP_ROME_SECRET"; _cp_secrets_2 "$CDP_ROME_IN_SECRET"; _cp_secrets_3 "$GITHUB_ROME_SECRET"; _cp_secrets_4 "$XAM_SECRET"; }
 
 #### CDP Traces ####
 

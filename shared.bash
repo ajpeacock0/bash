@@ -28,7 +28,8 @@ CYGWIN="$C/cygwin64/home/anpea"
 CYGWIN_WIN="$C_WIN/cygwin64/home/anpea"
 
 # Application directories
-ADB="$C/tools/adt-bundle-windows-x86_64-20140702/sdk/platform-tools/adb"
+ANDROID_SDK="$C/tools/adt-bundle-windows-x86_64-20140702/sdk"
+ADB="$ANDROID_SDK/platform-tools/adb"
 MSBUILD="$C/Program Files (x86)/MSBuild/14.0/Bin/MSBuild.exe"
 # NOTE: Due to the spaces in the path and the difference between aliases
 # and functions, two seperate variables are required
