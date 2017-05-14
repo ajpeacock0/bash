@@ -1,4 +1,4 @@
-source "${HOME}/shared.bash"
+source "${HOME}/variables.bash"
 
 source "${HOME}/general.bash"
 

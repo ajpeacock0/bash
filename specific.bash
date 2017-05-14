@@ -1,74 +1,14 @@
-#### ENV VARS ####
-
-# Enlistment directories
-ENLISTMENT_CDP="$F/enlistments/onecoreuap/windows/cdp"
-ENLISTMENT_APP_CONTRACT="$F/enlistments/onecoreuap/base/appmodel/AppContracts"
-
-# Git Repo locations of importanace
-COA="$GIT_REPOS/CortanaAndroid"
-PROJECT_ROME_GITHUB="$GIT_REPOS/project-rome"
-CDP_PINGPONG="$GIT_REPOS/CDPPingPong"
-TDD="$CDP_1/build/onecorefast/x64/debug/tests"
-ROME_APP="$CDP_1/samples/romanapp/android"
-ROME_IN_APK="$CDP_1/samples/romanapp/android/internal/build/outputs/apk"
-XAMARIN_APP="$CDP_1/samples/xamarinsample"
-XAMARIN_PROJ="$CDP_1/sdk/xamarin"
-
-# APK locations
-XAMARIN_APK="$XAMARIN_APP/ConnectedDevices.Xamarin.Droid.Sample/bin/"
-ROME_IN_APK="$ROME_APP/internal/build/outputs/apk"
-SDK_3P_AAR="$CDP_1/sdk/android/3p/build/outputs/aar"
-XAMARIN_DLL="$XAMARIN_PROJ/ConnectedDevices.Xamarin.Droid/bin"
-
-# Network directories
-VM_DIR="//winbuilds/release/RS_ONECORE_DEP_ACI/"
-RELEASE_VM_DIR="//winbuilds/release/RS2_RELEASE/"
-ANPEA_DIR="//redmond/osg/release/DEP/CDP/anpea"
-ROME_DROP="//redmond/osg/release/dep/CDP/V3Partners"
-CURRENT_ROME_DROP="$ROME_DROP/Rome_1703"
-
-# Note files directories
-NOTES="$C/notes/"
-BUG_FILES="$WORK/bug_files"
-
-VM_SETTINGS="$WORK_WIN/vm_settings"
-CMD_SETTINGS="$WORK_WIN/cmd.exe_settings"
-
-# Secret
-SECRET_HOME="D:\work_files\Secrets"
-CDP_ROME_SECRET="$SECRET_HOME\cdp_rome"
-CDP_ROME_IN_SECRET="$SECRET_HOME\cdp_rome_in"
-GITHUB_ROME_SECRET="$SECRET_HOME\github_rome"
-XAM_SECRET="$SECRET_HOME\Xamarin"
-
-# Application directories
-MY_JAVA_HOME="$C/Program\ Files/Java/jdk1.8.0_121"
-JAVAC="$MY_JAVA_HOME/bin/javac.exe"
-JAVAP="$MY_JAVA_HOME/bin/javap.exe"
-JAVAH="$MY_JAVA_HOME/bin/javah.exe"
-KEYTOOL="$MY_JAVA_HOME/jre/bin/keytool.exe"
-VS="$C/Program\ Files\ \(x86\)/Microsoft\ Visual\ Studio\ 14.0/Common7/IDE/devenv.exe"
-NUGET="$C/tools/NuGet/nuget.exe"
-CMAKE="$C/Users/anpea/AppData/Local/Android/sdk/cmake/3.6.3155560/bin/cmake.exe"
-
-# Local log directories
-SYS_CDP_WIN="\"$C_WIN\\Windows\\ServiceProfiles\\LocalService\\AppData\\Local\\ConnectedDevicesPlatform\""
-USER_CDP_WIN="\"$C_WIN\\Users\\anpea\\AppData\\Local\\ConnectedDevicesPlatform\""
-
-SYS_CDP="$C/Windows/ServiceProfiles/LocalService/AppData/Local/ConnectedDevicesPlatform"
-USER_CDP="$C/Users/anpea/AppData/Local/ConnectedDevicesPlatform"
-
 declare -A nav_keys=(
   # Build files
   [xam_apk]=$XAMARIN_APK
   [xam_dll]=$XAMARIN_DLL
   [sdk_aar]=$SDK_3P_AAR
-  [rome_apk]=$ROME_IN_APK
+  [rome_apk]=$ROME_IN_APK_DIR
   # System logs
   [cdpsvc]=$SYS_CDP
   [cdpusersvc]=$USER_CDP
   # Network
-  [anpea_dir]=$ANPEA_DIR
+  [network_dir]=$MY_NETWORK_DIR
   [drop]=$ROME_DROP
   [vms]=$VM_DIR
   # Git repos
@@ -85,9 +25,9 @@ declare -A nav_keys=(
   [work]=$WORK
   [notes]=$NOTES
   [bugs]=$BUG_FILES
-  [home]=$CYGWIN
+  [home]=$MY_HOME
   # Enlistment
-  [en]="$F/enlistments"
+  [en]=$MY_ENLISTMENT
   [en_cdp]=$ENLISTMENT_CDP
   [en_appservice]=$ENLISTMENT_APP_CONTRACT
   # CDP
@@ -99,13 +39,13 @@ declare -A script_keys=(
   [vm]="$VM_SETTINGS/aliases.pub"
   [cmd]="$CMD_SETTINGS/aliases.pub"
   # Bash
-  [inputrc]="$CYGWIN_WIN/.inputrc_custom"
-  [android]="$CYGWIN_WIN/android.bash"
-  [general]="$CYGWIN_WIN/general.bash"
-  [git]="$CYGWIN_WIN/git.bash"
-  [main]="$CYGWIN_WIN/main.bash"
-  [shared]="$CYGWIN_WIN/shared.bash"
-  [specific]="$CYGWIN_WIN/specific.bash"
+  [inputrc]="$MY_HOME_WIN/.inputrc_custom"
+  [android]="$MY_HOME_WIN/android.bash"
+  [general]="$MY_HOME_WIN/general.bash"
+  [git]="$MY_HOME_WIN/git.bash"
+  [main]="$MY_HOME_WIN/main.bash"
+  [vars]="$MY_HOME_WIN/variables.bash"
+  [specific]="$MY_HOME_WIN/specific.bash"
 )
 
 #### Navigation ALIASES ####
@@ -127,10 +67,11 @@ alias adb="$ADB"
 msbuild () { "$MSBUILD" $@; }
 alias subl="$SUBL_ALIAS"
 nuget () { "$NUGET" $@; }
-alias javac="$JAVAC"
-alias javap="$JAVAP"
-alias javah="$JAVAH"
+javac () { "$JAVAC" $@; }
+javap () { "$JAVAP" $@; }
+javah () { "$JAVAH" $@; }
 alias keytool="$KEYTOOL"
+alias apksigner="$APK_SIGNER"
 alias scons="$C/Python27/scons-2.4.1.bat "
 alias cmake="$CMAKE"
 
