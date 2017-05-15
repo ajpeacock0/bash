@@ -23,8 +23,6 @@ declare -A nav_keys=(
   [pingpong]=$CDP_PINGPONG
   # notes
   [work]=$WORK
-  [notes]=$NOTES
-  [bugs]=$BUG_FILES
   [home]=$MY_HOME
   # Enlistment
   [en]=$MY_ENLISTMENT
@@ -35,9 +33,6 @@ declare -A nav_keys=(
 )
 
 declare -A script_keys=(
-  # Windows
-  [vm]="$VM_SETTINGS/aliases.pub"
-  [cmd]="$CMD_SETTINGS/aliases.pub"
   # Bash
   [inputrc]="$MY_HOME_WIN/.inputrc_custom"
   [android]="$MY_HOME_WIN/android.bash"
@@ -84,17 +79,6 @@ alias xamarin_sdk="cygstart $XAMARIN_PROJ/ConnectedDevices.sln"
 # that causes the error `'\r': command not found`
 dos2unix () { sed -i 's/\r$//' $1; }
 
-#### Restoring CDP Secrets ####
-
-_cp_secret () { my_dir=`cat "$1"` && cp -r "$2" $my_dir; }
-
-_cp_secrets_1 () { _cp_secret "$1\path.txt" "$1\Secrets.java"; }
-_cp_secrets_2 () { _cp_secret "$1\path.txt" "$1\gradle.properties"; }
-_cp_secrets_3 () { _cp_secret "$1\path.txt" "$1\Secrets.java"; }
-_cp_secrets_4 () { _cp_secret "$1\path.txt" "$1\Secrets.cs"; }
-
-cp_secrets () { _cp_secrets_1 "$CDP_ROME_SECRET"; _cp_secrets_2 "$CDP_ROME_IN_SECRET"; _cp_secrets_3 "$GITHUB_ROME_SECRET"; _cp_secrets_4 "$XAM_SECRET"; }
-
 #### CDP Traces ####
 
 qsvc() { sc queryex cdpsvc; }
@@ -110,53 +94,3 @@ alias rm_user_log="rm $USER_CDP_WIN\\\\CDPTraces.log"
 
 alias sys_log="$SUBL_ALIAS $SYS_CDP_WIN\\\\CDPTraces.log"
 alias user_log="$SUBL_ALIAS $USER_CDP_WIN\\\\CDPTraces.log"
-
-#### Clearing / Moving build files ####
-
-clean_android () { rm -rf "$CDP_1/core/android/build" && rm -rf "$CDP_1/sdk/android/build" && rm -rf "$CDP_1/samples/CDPHost/android/app/build" && rm -rf "$CDP_1/samples/romanapp/android/internal/build";  }
-
-clean_cdphost () { rm -rf "$CDP_1/samples/CDPHost/android/app/build";  }
-
-clean_coa () { rm -rf "$COA/DSS/AuthLib/build"; }
-
-#### Download VM - Private Functions ####
-
-# Print and go to the latest build directory with a VHD
-_vm () { for var in {1..10}; do cd $1; ls | sort | tail -$var | head -1; cd `ls | sort | tail -$var | head -1`; if [ -d "$1/vhd/"]; then echo "$var : $1 exists"; break; fi; done; }
-
-# After using `_vm` to navigate to the directory, copy the VHD to local drive
-_cpvm() { rsync -a --progress $1/vhd/vhd_client_enterprise_en-us_vl/* $C/VHDs/; }
-
-# After using `_vm` to navigate to the directory, copy the sfpcopy to local drive
-_cpsfp() { rsync -a --progress $1/bin/idw/sfpcopy.exe $C/VHDs/; }
-
-# Print and go to the latest build directory with a VHD containing a sfpcopy
-_sfp () { for var in {1..10}; do cd $VM_DIR; ls | sort | tail -$var | head -1; cd `ls | sort | tail -$var | head -1`; if [ -d "$1/bin/idw/sfpcopy.exe" ]; then echo "$var : sfpcopy.exe exists"; break; fi; done; }
-
-_64 () { $1 "amd64fre"; }
-
-_86 () { $1 "x86fre"; }
-
-#### Download VM - Public Functions ####
-
-# go to the latest build directory
-latest () { cd $VM_DIR; ls | sort | tail -1; cd `ls | sort | tail -1`; }
-
-# go to the $1th latest build directory
-vmn () { cd $VM_DIR; ls | sort | tail -$1 | head -1; cd `ls | sort | tail -$1 | head -1`; }
-
-vm () { _64 _vm $VM_DIR; }
-vm86 () { _86 _vm $VM_DIR; }
-
-vm_release () { _64 _vm $RELEASE_VM_DIR; }
-vm86_release () { _86 _vm $RELEASE_VM_DIR; }
-
-cpvm () { _64 _cpvm; }
-cpvm86 () { _86 _cpvm; }
-
-cpsfp () { _64 _cpsfp; }
-cpsfp86 () { _86 _cpsfp; }
-
-sfp () { _64 _sfp; }
-# Note: Disabled due to broken
-# sfp86 () { _86 _sfp; }

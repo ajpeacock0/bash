@@ -52,22 +52,6 @@ CDP_1_WIN="$D_WIN/git_repos/cdp"
 WORK_WIN="$D_WIN/work_files"
 MY_HOME_WIN="$C_WIN/cygwin64/home/$LOCAL_WIN_USER"
 
-#### Work Specific Paths ####
-
-# Note files directories
-NOTES="$C/notes/"
-BUG_FILES="$WORK/bug_files"
-
-VM_SETTINGS="$WORK_WIN/vm_settings"
-CMD_SETTINGS="$WORK_WIN/cmd.exe_settings"
-
-# Secret - Used to copy back untracked files after a git clean
-SECRET_HOME="$WORK\Secrets"
-CDP_ROME_SECRET="$SECRET_HOME\cdp_rome"
-CDP_ROME_IN_SECRET="$SECRET_HOME\cdp_rome_in"
-GITHUB_ROME_SECRET="$SECRET_HOME\github_rome"
-XAM_SECRET="$SECRET_HOME\Xamarin"
-
 #### Machine Independent Variables ####
 
 # Enlistment directories
