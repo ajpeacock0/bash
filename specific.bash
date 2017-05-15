@@ -28,8 +28,9 @@ declare -A nav_keys=(
   [en]=$MY_ENLISTMENT
   [en_cdp]=$ENLISTMENT_CDP
   [en_appservice]=$ENLISTMENT_APP_CONTRACT
-  # CDP
+  # Miscellaneous
   [scripts]=$SCRIPTS
+  [wsl]=$WSL_HOME
 )
 
 declare -A script_keys=(

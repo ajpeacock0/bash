@@ -28,6 +28,7 @@ WORK="$D/work_files"
 MY_HOME="$C/cygwin64/home/$LOCAL_BASH_USER"
 ANDROID_SDK="$C/tools/adt-bundle-windows-x86_64-20140702/sdk"
 ANDROID_SDK_BUILD_TOOLS="$C/Users/$LOCAL_WIN_USER/AppData/Local/Android/sdk/build-tools/25.0.0"
+WSL_HOME="$C/Users/anpea/AppData/Local/lxss/home/anpea"
 
 # Application directories
 ADB="$ANDROID_SDK/platform-tools/adb"
@@ -38,6 +39,7 @@ CMAKE_HOME="$C/Users/$LOCAL_WIN_USER/AppData/Local/Android/sdk/cmake/3.6.3155560
 # Due to the spaces in the path and the difference between aliases and functions, two seperate variables are required
 SUBL_ALIAS="$C/Program\ Files/Sublime\ Text\ 3/subl.exe"
 SUBL_FUNC="$C/Program Files/Sublime Text 3/subl.exe"
+
 
 # CDP paths scripts
 SCRIPTS="$CDP_1/tools/scripts"
