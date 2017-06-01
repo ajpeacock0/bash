@@ -21,6 +21,7 @@ _execute()
     then
         "$1" "${keys[$3]}" && return 0
     else 
+        # TODO: only display keys prefixed with given string
         _print_array keys && return 1
     fi
 }

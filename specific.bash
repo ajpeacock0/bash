@@ -13,7 +13,7 @@ declare -A nav_keys=(
   [vms]=$VM_DIR
   # Git repos
   [xam_proj]=$XAMARIN_PROJ
-  [xam_app]=$XAMARIN_APP
+  [xam_app]=$XAMARIN_APP_DIR
   [coa]=$COA
   [rome_app]=$ROME_APP
   [cdp1]=$CDP_1
@@ -28,8 +28,10 @@ declare -A nav_keys=(
   [en]=$MY_ENLISTMENT
   [en_cdp]=$ENLISTMENT_CDP
   [en_appservice]=$ENLISTMENT_APP_CONTRACT
-  # CDP
+  # Miscellaneous
   [scripts]=$SCRIPTS
+  [wsl]=$WSL_HOME
+  [secrets]=$SECRET_HOME
 )
 
 declare -A script_keys=(
@@ -65,13 +67,17 @@ nuget () { "$NUGET" $@; }
 javac () { "$JAVAC" $@; }
 javap () { "$JAVAP" $@; }
 javah () { "$JAVAH" $@; }
-alias keytool="$KEYTOOL"
-alias apksigner="$APK_SIGNER"
+# Didn't work with multiple arguments
+# keytool () { "$KEYTOOL" $@; }
+alias keytool="$C/Program\ Files/Java/jdk1.8.0_121/jre/bin/keytool.exe"
+alias jarsigner="$C/Program\ Files/Java/jdk1.8.0_121/bin/jarsigner.exe"
+apksigner () { "$APK_SIGNER" $@; }
+zipalign () { "$ZIP_ALIGN" $@; }
 alias scons="$C/Python27/scons-2.4.1.bat "
 alias cmake="$CMAKE"
 
 alias err="//tkfiltoolbox/tools/839/1.7.2/x86/err "
-alias xamarin_sample="cygstart $XAMARIN_APP/ConnectedDevices.Xamarin.Droid.Sample.sln"
+alias xamarin_sample="cygstart $XAMARIN_APP_DIR/ConnectedDevices.Xamarin.Droid.Sample.sln"
 alias xamarin_sdk="cygstart $XAMARIN_PROJ/ConnectedDevices.sln"
 
 # Windows style newline characters can cause issues in Cygwin in certain files.

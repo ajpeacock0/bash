@@ -28,11 +28,13 @@ WORK="$D/work_files"
 MY_HOME="$C/cygwin64/home/$LOCAL_BASH_USER"
 ANDROID_SDK="$C/tools/adt-bundle-windows-x86_64-20140702/sdk"
 ANDROID_SDK_BUILD_TOOLS="$C/Users/$LOCAL_WIN_USER/AppData/Local/Android/sdk/build-tools/25.0.0"
+WSL_HOME="$C/Users/anpea/AppData/Local/lxss/home/anpea"
 
 # Application directories
 ADB="$ANDROID_SDK/platform-tools/adb"
 MSBUILD="$C/Program Files (x86)/MSBuild/14.0/Bin/MSBuild.exe"
 APK_SIGNER="$ANDROID_SDK_BUILD_TOOLS/apksigner.bat"
+ZIP_ALIGN="$ANDROID_SDK_BUILD_TOOLS/zipalign.exe"
 VS_HOME="$C/Program\ Files\ \(x86\)/Microsoft\ Visual\ Studio\ 14.0/Common7"
 CMAKE_HOME="$C/Users/$LOCAL_WIN_USER/AppData/Local/Android/sdk/cmake/3.6.3155560"
 # Due to the spaces in the path and the difference between aliases and functions, two seperate variables are required
@@ -64,7 +66,7 @@ PROJECT_ROME_GITHUB="$GIT_REPOS/project-rome"
 CDP_PINGPONG="$GIT_REPOS/CDPPingPong"
 TDD="$CDP_1/build/onecorefast/x64/debug/tests"
 ROME_APP="$CDP_1/samples/romanapp/android"
-XAMARIN_APP="$CDP_1/samples/xamarinsample"
+XAMARIN_APP_DIR="$CDP_1/samples/xamarinsample"
 XAMARIN_PROJ="$CDP_1/sdk/xamarin"
 CDP_ANDROID_SDK="$CDP_1\sdk\android"
 
@@ -73,10 +75,12 @@ XAMARIN_APP_WIN="$CDP_1_WIN\samples\xamarinsample"
 XAMARIN_PROJ_WIN="$CDP_1_WIN\sdk\xamarin"
 
 # APK locations
-XAMARIN_APK="$XAMARIN_APP/ConnectedDevices.Xamarin.Droid.Sample/bin/"
-ROME_IN_APK_DIR="$ROME_APP/internal/build/outputs/apk"
+XAMARIN_APK="$XAMARIN_APP_DIR/ConnectedDevices.Xamarin.Droid.Sample/bin"
+ROME_IN_APK_DIR="$ROME_APP/app/build/outputs/apk"
 SDK_3P_AAR="$CDP_ANDROID_SDK\3p\build\outputs\aar"
 XAMARIN_DLL="$XAMARIN_PROJ/ConnectedDevices.Xamarin.Droid/bin"
+
+XAMARIN_APK_WIN="$CDP_1_WIN/samples/xamarinsample/ConnectedDevices.Xamarin.Droid.Sample/bin"
 
 # Network directories
 VM_DIR="//winbuilds/release/RS_ONECORE_DEP_ACI/"
@@ -103,6 +107,7 @@ USER_CDP="$C/Users/$LOCAL_WIN_USER/AppData/Local/ConnectedDevicesPlatform"
 
 #### Android Related Variables ####
 
+# Required for pidcat
 export PATH=$PATH:$ANDROID_SDK/platform-tools
 export PATH=$PATH:$ANDROID_SDK/tools
 
@@ -139,8 +144,10 @@ ROMAN_APP_IN="$APP_DIR/$ROMAN_APP_IN_NAME/files"
 XAMARIN_APP="$APP_DIR/$XAMARIN_APP_NAME/files"
 
 # CDP Build paths
-ROME_IN_APK="$ROME_APP_WIN\internal\build\outputs\apk\romanAppInternal-armv7-debug.apk"
-XAMARIN_APP_APK="$XAMARIN_APP_WIN\ConnectedDevices.Xamarin.Droid.Sample\obj\Debug\android\bin\com.microsoft.romanapp.xamarin.apk"
+ROME_IN_APK="$ROME_APP_WIN\app\build\outputs\apk\romanAppInternal-armv7-debug.apk"
+CDP_HOST_APK="D:\git_repos\cdp\samples\CDPHost\android\app\build\outputs\apk\cdphost-armv7-debug.apk"
+
+XAMARIN_APP_APK="$XAMARIN_APP_WIN\ConnectedDevices.Xamarin.Droid.Sample\obj\Debug\android\bin\com.microsoft.romanapp.xamarin.MySigned.apk"
 XAMARIN_APP_RELEASE_APK="$XAMARIN_APP_WIN\ConnectedDevices.Xamarin.Droid.Sample\bin\Release\com.microsoft.romanapp.xamarin-Signed.apk"
 XAM_DLL_CSPROJ="$XAMARIN_PROJ_WIN\ConnectedDevices.Xamarin.Droid\ConnectedDevices.Xamarin.Droid.csproj"
 XAM_APP_CSPROJ="$XAMARIN_APP_WIN\ConnectedDevices.Xamarin.Droid.Sample\ConnectedDevices.Xamarin.Droid.Sample.csproj"
