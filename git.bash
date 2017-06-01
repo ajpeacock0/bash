@@ -99,6 +99,15 @@ alias gundo="git reset HEAD@{1}"
 # Undo last commit by reseting and discard the changes
 undo_last() { reset && discard; }
 
+# Ignore local content changes to tracked file
+alias ignore_changes="git update-index --assume-unchanged"
+
+# Undo `ignore_changes`
+alias track_changes="git update-index --no-assume-unchanged"
+
+# View files marked with --assume-unchanged
+alias ignored_files="git ls-files -v | grep '^[[:lower:]]'"
+
 #### Conflicts ####
 
 # list all conflicted files
