@@ -144,7 +144,8 @@ ROMAN_APP_IN="$APP_DIR/$ROMAN_APP_IN_NAME/files"
 XAMARIN_APP="$APP_DIR/$XAMARIN_APP_NAME/files"
 
 # CDP Build paths
-ROME_IN_APK="$ROME_APP_WIN\app\build\outputs\apk\romanAppInternal-armv7-debug.apk"
+ROME_IN_APK="$ROME_APP_WIN\app\build\outputs\apk\romanAppInternal-armeabi-v7a-debug.apk"
+
 CDP_HOST_APK="D:\git_repos\cdp\samples\CDPHost\android\app\build\outputs\apk\cdphost-armv7-debug.apk"
 
 XAMARIN_APP_APK="$XAMARIN_APP_WIN\ConnectedDevices.Xamarin.Droid.Sample\obj\Debug\android\bin\com.microsoft.romanapp.xamarin.MySigned.apk"
