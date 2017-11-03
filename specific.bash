@@ -18,10 +18,13 @@ declare -A nav_keys=(
   [rome_app]=$ROME_APP
   [cdp1]=$CDP_1
   [cdp2]=$CDP_2
+  [cdp3]=$CDP_3
   [cdpmaster]=$CDP_MASTER
   [github]=$PROJECT_ROME_GITHUB
   [pingpong]=$CDP_PINGPONG
+  [os]=$MS_OS
   # notes
+  [notes]=$NOTES
   [work]=$WORK
   [home]=$MY_HOME
   # Enlistment
@@ -32,6 +35,14 @@ declare -A nav_keys=(
   [scripts]=$SCRIPTS
   [wsl]=$WSL_HOME
   [secrets]=$SECRET_HOME
+  [downloads]=$DOWNLOADS
+)
+
+declare -A work_dir_funcs=(
+  # Git repos
+  [cdp1]=set_cdp1
+  [cdp2]=set_cdp2
+  [cdp3]=set_cdp3
 )
 
 declare -A script_keys=(
@@ -43,9 +54,12 @@ declare -A script_keys=(
   [main]="$MY_HOME_WIN/main.bash"
   [vars]="$MY_HOME_WIN/variables.bash"
   [specific]="$MY_HOME_WIN/specific.bash"
+  [sign_in]="$MY_HOME_WIN/rome_sign_in.bash"
 )
 
 #### Navigation ALIASES ####
+
+_set_dir() { _execute_func work_dir_funcs $1; }
 
 _navigate() { _execute $1 nav_keys $2; }
 
@@ -53,14 +67,15 @@ _navigate() { _execute $1 nav_keys $2; }
 op() { _navigate cygstart $1; }
 
 # Change directory to path name - gt = GO to
-go() { _navigate cd $1; }
+go() { _navigate cd $1; _set_dir $1; }
 
 # Check Script
 cs() { _execute "$SUBL_FUNC" script_keys $1; }
 
 #### PROGRAM ALIASES ####
 
-alias adb="$ADB"
+adb () { "$ADB" $@; }
+xde () { "$XDE" $@; }
 msbuild () { "$MSBUILD" $@; }
 alias subl="$SUBL_ALIAS"
 nuget () { "$NUGET" $@; }
@@ -73,6 +88,7 @@ alias keytool="$C/Program\ Files/Java/jdk1.8.0_121/jre/bin/keytool.exe"
 alias jarsigner="$C/Program\ Files/Java/jdk1.8.0_121/bin/jarsigner.exe"
 apksigner () { "$APK_SIGNER" $@; }
 zipalign () { "$ZIP_ALIGN" $@; }
+dexdump () { "$DEXDUMP" $@; }
 alias scons="$C/Python27/scons-2.4.1.bat "
 alias cmake="$CMAKE"
 

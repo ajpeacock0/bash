@@ -26,6 +26,28 @@ _execute()
     fi
 }
 
+_execute_opt()
+{
+    local -n keys=$2
+
+    if [ $# -eq 3 ] && [ ${keys[$3]+exists} ]
+    then
+        "$1" "${keys[$3]}"
+    fi
+    return 0
+}
+
+_execute_func()
+{
+    local -n funcs=$1
+
+    if [ $# -eq 2 ] && [ ${funcs[$2]+exists} ]
+    then
+        "${funcs[$2]}"
+    fi
+    return 0
+}
+
 #### Utility ####
 
 # Improved ls
@@ -63,6 +85,8 @@ alias space="df -h"
 
 # Improved rm for larger files TODO: clean up the need to create this enpty_dir/
 alias rmsync="mkdir empty_dir; rsync -a --progress --delete empty_dir/ "
+
+display () { typeset -f "$1"; }
 
 #### History ####
 

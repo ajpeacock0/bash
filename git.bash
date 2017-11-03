@@ -16,6 +16,8 @@ alias fe="git fetch -v"
 # Shortcut + enable Perl regex grep
 alias gg="git grep -P "
 
+gg_uniq () { git grep -P $1 | awk -F: '{print $1}' | uniq; }
+
 # Shortcut. gl = Git List
 alias gl="git ls-files"
 
@@ -71,7 +73,20 @@ alias updatesub="git submodule update --recursive --init"
 alias gmv="git mv -f "
 
 # Delete all non-commited files (- etags file) TODO: follow up with a `cp_secrets`
-alias gnuke="git clean -fdx -e ".tags" -e \".tags_sorted_by_file\""
+gnuke () 
+{ 
+    echo "Comfirm deletion of the following files? (Remember all non-added files will be removed)"
+    git clean -fdxn &&
+    while true; do
+        read -s -n 1 C
+        case $C in
+            [y]* ) git clean -fdx -e ".tags" -e \".tags_sorted_by_file\"; break;;
+            [n]* ) break;;
+            * ) echo "Please answer y or n.";;
+        esac
+    done
+}
+
 
 # Push to origin HEAD with force
 alias submit="git push origin +HEAD"
@@ -110,6 +125,9 @@ alias track_changes="git update-index --no-assume-unchanged"
 
 # View files marked with --assume-unchanged
 alias ignored_files="git ls-files -v | grep '^[[:lower:]]'"
+
+# See files checked into git
+alias cf="git ls-files -v"
 
 #### Conflicts ####
 
@@ -233,6 +251,9 @@ alias reflog="git reflog --date=iso"
 # view the file changed list in the given commit ID
 alias cinfo="git diff-tree --no-commit-id --name-status -r "
 
+# View a list of all deleted files
+alias gdeleted="git log --diff-filter=D --summary | grep delete"
+
 # List all existing files being tracked by the current branch
 tracked() { git ls-tree -r $(currbr) --name-only; }
 
@@ -247,3 +268,9 @@ gtouch () { git log --no-merges --stat --author="$1" --name-only --pretty=format
 
 # Perform a "git grep" including the history of the files
 greph () { git rev-list --all | xargs git grep "$1"; }
+
+get_unstaged_files() { git diff --name-only; }
+
+get_staged_files() { git diff --staged --name-only --diff-filter=ACMRT; }
+
+# git worktree add ../cdp_3 master
