@@ -89,7 +89,8 @@ gnuke ()
 
 
 # Push to origin HEAD with force
-alias submit="git push origin +HEAD"
+# TODO: Make this rebor, check to see if you still want to push afterwards
+submit () { git push origin +HEAD; }
 
 #### Commitments ####
 

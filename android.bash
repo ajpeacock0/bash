@@ -1,116 +1,173 @@
 #### Key Declarations ####
 
-declare -A app_keys=(
-    [cdphost]=$CDP_HOST
-    [coa]=$CORTANA
-    [tdd]=$TDDRUNNER
-    [rome_ex]=$ROMAN_APP
-    [rome_in]=$ROMAN_APP_IN
-    [xam]=$XAMARIN_APP
-)
+set_android_arrays()
+{
+    declare -g -A app_keys=(
+        # OneRomanApp
+        [one_rome]=$ONE_ROME_APP_FILES
+        [one_rome_release]=$ONE_ROME_APP_FILES
+        [one_rome_x86]=$ONE_ROME_APP_FILES
+        [one_rome_x86_release]=$ONE_ROME_APP_FILES
+        # Xamarin RomanApp
+        [xam]=$XAMARIN_APP_FILES
+        [xam_release]=$XAMARIN_APP_FILES
+        [xam_x86]=$XAMARIN_APP_FILES
+        [xam_x86_release]=$XAMARIN_APP_FILES
+        # CDPHost
+        [cdphost]=$CDP_HOST_FILES
+        [cdphost_release]=$CDP_HOST_FILES
+        [cdphost_x86]=$CDP_HOST_FILES
+        [cdphost_x86_release]=$CDP_HOST_FILES
+        # TDD Runner
+        [tdd]=$TDDRUNNER_FILES
+        [tdd_release]=$TDDRUNNER_FILES
+        [tdd_x86]=$TDDRUNNER_FILES
+        [tdd_x86_release]=$TDDRUNNER_FILES
+    )
 
-declare -A app_name_keys=(
-    [cdphost]=$CDP_HOST_NAME
-    [coa]=$CORTANA_NAME
-    [tdd]=$TDDRUNNER_NAME
-    [rome_ex]=$ROMAN_APP_NAME
-    [rome_in]=$ROMAN_APP_IN_NAME
-    [xam]=$XAMARIN_APP_NAME
-    # Because this is also used for install
-    [rome_in_x86]=$ROMAN_APP_IN_NAME
-    [cdphost_x86]=$CDP_HOST_NAME
-    [tdd_x86]=$TDDRUNNER_NAME
-)
+    declare -g -A app_name_keys=(
+        # OneRomanApp
+        [one_rome]=$ONE_ROMAN_APP_NAME
+        [one_rome_release]=$ONE_ROMAN_APP_NAME
+        [one_rome_x86]=$ONE_ROMAN_APP_NAME
+        [one_rome_x86_release]=$ONE_ROMAN_APP_NAME
+        # Xamarin RomanApp
+        [xam]=$XAMARIN_APP_NAME
+        [xam_release]=$XAMARIN_APP_NAME
+        [xam_x86]=$XAMARIN_APP_NAME
+        [xam_x86_release]=$XAMARIN_APP_NAME
+        # CDPHost
+        [cdphost]=$CDP_HOST_NAME
+        [cdphost_release]=$CDP_HOST_NAME
+        [cdphost_x86]=$CDP_HOST_NAME
+        [cdphost_x86_release]=$CDP_HOST_NAME
+        # TDD Runner
+        [tdd]=$TDDRUNNER_NAME
+        [tdd_release]=$TDDRUNNER_NAME
+        [tdd_x86]=$TDDRUNNER_NAME
+        [tdd_x86_release]=$TDDRUNNER_NAME
+    )
 
-declare -A build_keys=(
-    [1p]="sdk_1p:assembleDebug"
-    [1p_release]="sdk_1p:assembleRelease"
-    [3p]="sdk_3p:assembleDebug"
-    [3p_release]="sdk_3p:assembleRelease"
-    [converged]="sdk_converged:assembleDebug"
-    [converged_release]="sdk_converged:assembleRelease"
-    [rome_in]="romanAppInternal:assembleDebug"
-    [rome_in_release]="romanAppInternal:assembleRelease"
-    [rome_ex]=":romanApp:assembleDebug"
-    [rome_ex_release]=":romanApp:assembleRelease"
-    [wnsping]=":wnspingtest:assembleDebug"
-    [wnsping_release]=":wnspingtest:assembleRelease"
-    [cdphost]="cdphost:assembleDebug"
-    [cdphost_release]="cdphost:assembleRelease"
-    [tdd]="tdd:assembleDebug"
-    [tdd_release]="tdd:assembleRelease"
-    [conv]="sdk_converged:assembleDebug"
-    [conv_release]="sdk_converged:assembleRelease"
-    # x86 versions
-    [1p_x86]="sdk_1p:assembleDebug -PabiToBuild=x86"
-    [1p_release_x86]="sdk_1p:assembleRelease -PabiToBuild=x86"
-    [3p_x86]="sdk_3p:assembleDebug -PabiToBuild=x86"
-    [3p_release_x86]="sdk_3p:assembleRelease -PabiToBuild=x86"
-    [converged_x86]="sdk_converged:assembleDebug -PabiToBuild=x86"
-    [converged_release_x86]="sdk_converged:assembleRelease -PabiToBuild=x86"
-    [rome_in_x86]="romanAppInternal:assembleDebug -PabiToBuild=x86"
-    [rome_in_release_x86]="romanAppInternal:assembleRelease -PabiToBuild=x86"
-    [rome_ex_x86]=":romanApp:assembleDebug -PabiToBuild=x86"
-    [rome_ex_release_x86]=":romanApp:assembleRelease -PabiToBuild=x86"
-    [wnsping_x86]=":wnspingtest:assembleDebug -PabiToBuild=x86"
-    [wnsping_release_x86]=":wnspingtest:assembleRelease -PabiToBuild=x86"
-    [cdphost_x86]="cdphost:assembleDebug -PabiToBuild=x86"
-    [cdphost_release_x86]="cdphost:assembleRelease -PabiToBuild=x86"
-    [tdd_x86]="tdd:assembleDebug -PabiToBuild=x86"
-    [tdd_release_x86]="tdd:assembleRelease -PabiToBuild=x86"
-)
+    declare -g -A install_keys=(
+        # OneRomanApp
+        [one_rome]=$ONE_ROME_APK
+        # [one_rome_release]=$TODO
+        [one_rome_x86]=$ROME_IN_APK_X86
+        # [one_rome_x86_release]=$TODO
+        # Xamarin RomanApp
+        [xam]=$XAMARIN_APP_APK
+        [xam_release]=$XAMARIN_APP_RELEASE_APK
+        # [xam_x86]=$TODO
+        # [xam_x86_release]=$TODO
+        # CDPHost
+        [cdphost]=$CDP_HOST_APK
+        # [cdphost_release]=$TODO
+        [cdphost_x86]=$CDP_HOST_APK_X86
+        # [cdphost_x86_release]=$TODO
+        # TDD Runner
+        [tdd]=$TDD_RUNNER_APK
+        # [tdd_release]=$TODO
+        [tdd_x86]=$TDD_RUNNER_APK_X86
+        # [tdd_x86_release]=$TODO
+    )
 
-declare -A clean_keys=(
-    [3p]="$CURR_CDP/sdk/android/3p/build" 
-    [cdphost]="$CURR_CDP/samples/CDPHost/android/app/build" 
-    [rome_in]="$CURR_CDP/samples/romanapp/android/internal/build"
-    [rome_ex]="$CURR_CDP/samples/romanapp/android/app/build"
-    [dll_release]="$XAMARIN_PROJ/ConnectedDevices.Xamarin.Droid/bin"
-    [app]="$XAMARIN_APP_DIR/ConnectedDevices.Xamarin.Droid.Sample/bin $XAMARIN_APP_DIR/ConnectedDevices.Xamarin.Droid.Sample/obj"
-)
+    declare -g -A build_keys=(
+        # First Party SDK - DEPRECIATED
+        [1p]="sdk_1p:assembleDebug"
+        [1p_release]="sdk_1p:assembleRelease"
+        # Third Party SDK - DEPRECIATED
+        [3p]="sdk_3p:assembleDebug"
+        [3p_release]="sdk_3p:assembleRelease"
+        # Converged SDK
+        [conv]="sdk_converged:assembleDebug"
+        [conv_release]="sdk_converged:assembleRelease"
+        [conv_x86]="sdk_converged:assembleDebug -PabiToBuild=x86"
+        [conv_release_x86]="sdk_converged:assembleRelease -PabiToBuild=x86"
+        # OneRomanApp
+        [one_rome]=":oneRomanApp:assembleDebug"
+        [one_rome_release]=":oneRomanApp:assembleRelease"
+        [one_rome_x86]=":oneRomanApp:assembleDebug -PabiToBuild=x86"
+        [one_rome_x86_release]=":oneRomanApp:assembleRelease -PabiToBuild=x86"
+        # WNS Ping Test Application
+        [wnsping]=":wnspingtest:assembleDebug"
+        [wnsping_release]=":wnspingtest:assembleRelease"
+        [wnsping_x86]=":wnspingtest:assembleDebug -PabiToBuild=x86"
+        [wnsping_release_x86]=":wnspingtest:assembleRelease -PabiToBuild=x86"
+        # CDP Host
+        [cdphost]="cdphost:assembleDebug"
+        [cdphost_release]="cdphost:assembleRelease"
+        [cdphost_x86]="cdphost:assembleDebug -PabiToBuild=x86"
+        [cdphost_release_x86]="cdphost:assembleRelease -PabiToBuild=x86"
+        # TDD Runner
+        [tdd]="tdd:assembleDebug"
+        [tdd_release]="tdd:assembleRelease"
+        [tdd_x86]="tdd:assembleDebug -PabiToBuild=x86"
+        [tdd_release_x86]="tdd:assembleRelease -PabiToBuild=x86"
+        # Converged SDK Tests
+        [sdk_test]="sdk_converged:assembleDebug sdk_test:connectedDebugAndroidTest"
+        [sdk_test_release]="sdk_converged:assembleDebug sdk_test:connectedReleaseAndroidTest -PinstrumentedTestBuildType=release"
+    )
 
-declare -A xam_keys=(
-    [dll]="/t:Rebuild /p:Configuration=Debug $XAM_DLL_CSPROJ"
-    [dll_release]="/t:Rebuild /p:Configuration=Release $XAM_DLL_CSPROJ"
-    # Without SignAndroidPackage no APK is generated
-    [app]="/t:Rebuild /t:SignAndroidPackage /p:Configuration=Debug $XAM_APP_CSPROJ"
-    [app_release]="/t:Rebuild /t:SignAndroidPackage /p:Configuration=Release $XAM_APP_CSPROJ"
-)
+    declare -g -A clean_keys=(
+        # First Party SDK - DEPRECIATED
+        [3p]="$CURR_CDP/sdk/android/3p/build" 
+        # Xamarin SDK
+        [xam_sdk]="$XAMARIN_PROJ/ConnectedDevices.Xamarin.Droid/bin"
+        # OneRomanApp
+        [one_rome]="$CURR_CDP/samples/oneromanapp/android/app/build"
+        [one_rome_release]="$CURR_CDP/samples/oneromanapp/android/app/build"
+        [one_rome_x86]="$CURR_CDP/samples/oneromanapp/android/app/build"
+        [one_rome_x86_release]="$CURR_CDP/samples/oneromanapp/android/app/build"
+        # Xamarin RomanApp
+        [xam]="$XAMARIN_APP_DIR/ConnectedDevices.Xamarin.Droid.Sample/bin $XAMARIN_APP_DIR/ConnectedDevices.Xamarin.Droid.Sample/obj"
+        [xam_release]="$XAMARIN_PROJ/ConnectedDevices.Xamarin.Droid/bin"
+        [xam_x86]=$XAMARIN_APP
+        [xam_x86_release]=$XAMARIN_APP
+        # CDPHost
+        [cdphost]="$CURR_CDP/samples/CDPHost/android/app/build" 
+        [cdphost_release]="$CURR_CDP/samples/CDPHost/android/app/build" 
+        [cdphost_x86]="$CURR_CDP/samples/CDPHost/android/app/build" 
+        [cdphost_x86_release]="$CURR_CDP/samples/CDPHost/android/app/build" 
+        # TDD Runner
+        [tdd]="$CURR_CDP/test/tdd/runners/android/app/build"
+        [tdd_release]="$CURR_CDP/test/tdd/runners/android/app/build"
+        [tdd_x86]="$CURR_CDP/test/tdd/runners/android/app/build"
+        [tdd_x86_release]="$CURR_CDP/test/tdd/runners/android/app/build"
+    )
 
-declare -A sign_input_keys=(
-    [app]=$XAMARIN_APK_WIN/Debug/com.microsoft.romanapp.xamarin
-)
+    declare -g -A xam_keys=(
+        [dll]="/t:Rebuild /p:Configuration=Debug $XAM_DLL_CSPROJ"
+        [dll_release]="/t:Rebuild /p:Configuration=Release $XAM_DLL_CSPROJ"
+        # Without SignAndroidPackage no APK is generated
+        [app]="/t:Rebuild /t:SignAndroidPackage /p:Configuration=Debug $XAM_APP_CSPROJ"
+        [app_release]="/t:Rebuild /t:SignAndroidPackage /p:Configuration=Release $XAM_APP_CSPROJ"
+    )
 
-declare -A machine_keys=(
-    [cdp1]=$CDP1
-    [cdp2]=$CDP2
-    [master]=$MASTER
-    [rs1]=$RS1
-    [official]=$OFFICIAL
-    [laptop]=$LAPTOP
-    [devbox]=$DEVBOX
-)
+    declare -g -A sign_input_keys=(
+        [app]=$XAMARIN_APK_WIN/Debug/com.microsoft.romanapp.xamarin
+    )
 
-declare -A install_keys=(
-    [rome_in]=$ROME_IN_APK
-    [xam]=$XAMARIN_APP_APK
-    [xam_release]=$XAMARIN_APP_RELEASE_APK
-    [cdphost]=$CDP_HOST_APK
-    [tdd]=$TDD_RUNNER_APK
-    # x86
-    [rome_in_x86]=$ROME_IN_APK_X86
-    [cdphost_x86]=$CDP_HOST_APK_X86
-    [tdd_x86]=$TDD_RUNNER_APK_X86
-)
+    declare -g -A machine_keys=(
+        [cdp1]=$CDP1
+        [cdp2]=$CDP2
+        [master]=$MASTER
+        [rs1]=$RS1
+        [official]=$OFFICIAL
+        [laptop]=$LAPTOP
+        [devbox]=$DEVBOX
+    )
 
-declare -A jni_keys=(
-    [platform_internal]="PlatformInternal"
-)
+    declare -g -A jni_keys=(
+        [platform_internal]="PlatformInternal"
+    )
 
-declare -A adb_device_keys=(
-    [vm]=-e
-    [usb]=-d
-)
+    declare -g -A adb_device_keys=(
+        [vm]=-e
+        [usb]=-d
+    )
+}
+
+set_android_arrays
 
 _set_adb_device () { ADB_DEVICE=$1; }
 
@@ -193,13 +250,15 @@ launch () { _choose_adb_device $2 && _execute _app_launch app_name_keys $1; }
 # Close given application
 close () { _choose_adb_device $2 && _execute _app_close app_name_keys $1; }
 
+restart () { close $1 $2 && launch $1 $2; }
+
 # Close app process and clear out all the stored data for given that app
 nuke () { _choose_adb_device $2 && _execute _app_nuke app_name_keys $1; }
 
 # View logcat though a better view - https://github.com/JakeWharton/pidcat
 logcat () { python "$D_WIN\git_repos\pidcat\pidcat.py" $@; }
 
-adb_restart() { adb kill-server && adb start-server; }
+adb_restart() { adb kill-server && sleep 1 && adb start-server; }
 
 adb_connect () { adb_restart && adb connect "$HOME_IP:$HOME_PORT" && adb devices; }
 
@@ -250,7 +309,11 @@ _install () { _adb_run install -r $1; }
 
 _uninstall () { _adb_run uninstall $1; }
 
+_javap () { javap -classpath $CLASSES_JAR "com.microsoft.connecteddevices.$1"; }
+
 _build_jni () { cd "$CON_DEV_DIR" && "$JAVAH" -v -classpath "$JNI_CLASSPATH" com.microsoft.connecteddevices.$1 && cp "$CON_DEV_DIR\com_microsoft_connecteddevices_$1.h" "$CDP_JNI_DIR\com_microsoft_connecteddevices_$1.h"; }
+
+_build_jni_test () { cd "$CON_TEST_DIR" && "$JAVAH" -v -classpath "$JNI_CLASSPATH" com.microsoft.connecteddevices.$1 && cp "$CON_TEST_DIR\com_microsoft_connecteddevices_$1.h" "$CDP_JNI_DIR\com_microsoft_connecteddevices_$1.h"; }
 
 _align_apk() { "$ZIP_ALIGN" 4 $1 $2; }
 
@@ -258,6 +321,10 @@ _align_apk() { "$ZIP_ALIGN" 4 $1 $2; }
 
 # Using gradle, builds the given task
 build() { _execute _gradlew build_keys $1; }
+
+build_n() { _execute_notify _gradlew build_keys $1; }
+
+build_in() { build $1 && adb_in $1 $2; }
 
 # Build the AAR, copies it and builds the DLL
 # build_xam_dll() { build 3p && cp_aar && build_xam dll; }
@@ -318,10 +385,11 @@ tdd_pull () { _choose_adb_device $1 && _adb_root; _adb_run pull /data/user/0/$TD
 
 tdd_in_run() { adb_in tdd $2 && tdd_run $1 $2; }
 
-
 # Get OS version
 # echo $(adb shell getprop ro.build.version.release | tr -d '\r')
 
 
 # adb -d shell am start -n com.microsoft.romanappinternal/com.microsoft.romanapp.LoginActivity
 # adb -e shell am start -S -D -n com.microsoft.romanappinternal/com.microsoft.romanapp.LoginActivity
+
+# https://superuser.com/questions/345447/how-can-i-trigger-a-notification-when-a-job-process-ends

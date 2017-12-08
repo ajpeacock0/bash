@@ -72,6 +72,8 @@ go() { _navigate cd $1; _set_dir $1; }
 # Check Script
 cs() { _execute "$SUBL_FUNC" script_keys $1; }
 
+_send_notification() { curl -s https://api.pushbullet.com/v2/pushes -X POST -u $PUSHBULLET_ACCESS_TOKEN: --header "Content-Type: application/json" --data-binary "{\"type\": \"note\", \"title\":\"$1\", \"body\": \"$2\"}" > /dev/null; }
+
 #### PROGRAM ALIASES ####
 
 adb () { "$ADB" $@; }
@@ -79,9 +81,11 @@ xde () { "$XDE" $@; }
 msbuild () { "$MSBUILD" $@; }
 alias subl="$SUBL_ALIAS"
 nuget () { "$NUGET" $@; }
+java () { "$JAVA" $@; }
 javac () { "$JAVAC" $@; }
 javap () { "$JAVAP" $@; }
 javah () { "$JAVAH" $@; }
+# junit () { "$JUNIT" $@; }
 # Didn't work with multiple arguments
 # keytool () { "$KEYTOOL" $@; }
 alias keytool="$C/Program\ Files/Java/jdk1.8.0_121/jre/bin/keytool.exe"
@@ -92,6 +96,22 @@ dexdump () { "$DEXDUMP" $@; }
 alias scons="$C/Python27/scons-2.4.1.bat "
 alias cmake="$CMAKE"
 
+
+# set_android_arrays()
+# {
+#     declare -g -A taef_keys=(
+#         [64_debug]=$CDP_UT_X64_DEBUG
+#         [64_release]=$CDP_UT_X64_RELEASE
+#         # [86_debug]=$TODO
+#         # [86_release]=$TODO
+#     )
+
+taef () { "$TAEF" -f $CDP_UT_X64_DEBUG $@; }
+taef_release () { "$TAEF" -f $CDP_UT_X64_RELEASE $@; }
+
+# _execute "$TAEF -f" taef_keys $1
+
+
 alias err="//tkfiltoolbox/tools/839/1.7.2/x86/err "
 alias xamarin_sample="cygstart $XAMARIN_APP_DIR/ConnectedDevices.Xamarin.Droid.Sample.sln"
 alias xamarin_sdk="cygstart $XAMARIN_PROJ/ConnectedDevices.sln"
@@ -101,18 +121,23 @@ alias xamarin_sdk="cygstart $XAMARIN_PROJ/ConnectedDevices.sln"
 # that causes the error `'\r': command not found`
 dos2unix () { sed -i 's/\r$//' $1; }
 
+
 #### CDP Traces ####
 
 qsvc() { sc queryex cdpsvc; }
 
 # Note: Requires Admin
-stopsvc() { sc stop cdpsvc; }
-startsvc() { sc start cdpsvc; }
-disablesvc() { sc config cdpsvc start=disabled; }
-enablesvc() { sc config cdpsvc start=demand; }
+stop_svc() { sc stop cdpsvc; }
+start_svc() { sc start cdpsvc; }
+disable_svc() { sc config cdpsvc start=disabled; }
+enable_svc() { sc config cdpsvc start=demand; }
 
-alias rm_sys_log="stopsvc && rm $SYS_CDP_WIN\\\\CDPTraces.log && startsvc"
-alias rm_user_log="rm $USER_CDP_WIN\\\\CDPTraces.log"
+rm_sys_log () { stop_svc; rm $SYS_CDP_WIN\\\\CDPTraces.log && startsvc; };
+rm_user_log () { rm $USER_CDP_WIN\\\\CDPTraces.log; };
 
-alias sys_log="$SUBL_ALIAS $SYS_CDP_WIN\\\\CDPTraces.log"
-alias user_log="$SUBL_ALIAS $USER_CDP_WIN\\\\CDPTraces.log"
+sys_log () { $SUBL_ALIAS $SYS_CDP_WIN\\\\CDPTraces.log; };
+user_log () { $SUBL_ALIAS $USER_CDP_WIN\\\\CDPTraces.log; };
+
+set_cdp1() { CURR_CDP="$CDP_1" && CURR_CDP_WIN="$CDP_1_WIN" && set_variables && set_android_arrays; }
+set_cdp2() { CURR_CDP="$CDP_2" && CURR_CDP_WIN="$CDP_2_WIN" && set_variables && set_android_arrays; }
+set_cdp3() { CURR_CDP="$CDP_3" && CURR_CDP_WIN="$CDP_3_WIN" && set_variables && set_android_arrays; }

@@ -26,6 +26,20 @@ _execute()
     fi
 }
 
+_execute_notify()
+{
+    START_TIME=$(date +"%r")
+    local -n keys=$2
+
+    if [ $# -eq 3 ] && [ ${keys[$3]+exists} ]
+    then
+        "$1" "${keys[$3]}"; echo "Sending Notification"; _send_notification "Execution complete" "${keys[$3]}\nTime: $START_TIME -$(date +"%r")" && return 0
+    else 
+        # TODO: only display keys prefixed with given string
+        _print_array keys && return 1
+    fi
+}
+
 _execute_opt()
 {
     local -n keys=$2
