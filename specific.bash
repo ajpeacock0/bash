@@ -95,7 +95,8 @@ zipalign () { "$ZIP_ALIGN" $@; }
 dexdump () { "$DEXDUMP" $@; }
 alias scons="$C/Python27/scons-2.4.1.bat "
 alias cmake="$CMAKE"
-
+# python () { "$PYTHON" $@; }
+# pip () { "$PIP" $@; }
 
 # set_android_arrays()
 # {

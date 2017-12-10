@@ -48,6 +48,32 @@ set_android_arrays()
         [tdd_x86_release]=$TDDRUNNER_NAME
     )
 
+    declare -g -A app_name_deb_keys=(
+        # OneRomanApp
+        [one_rome]=$ONE_ROMAN_APP_NAME/.MainActivity
+        [one_rome_release]=$ONE_ROMAN_APP_NAME/.MainActivity
+        [one_rome_x86]=$ONE_ROMAN_APP_NAME/.MainActivity
+        [one_rome_x86_release]=$ONE_ROMAN_APP_NAME/.MainActivity
+        # Xamarin RomanApp
+        [xam]=$XAMARIN_APP_NAME
+        [xam_release]=$XAMARIN_APP_NAME
+        [xam_x86]=$XAMARIN_APP_NAME
+        [xam_x86_release]=$XAMARIN_APP_NAME
+        # CDPHost
+        [cdphost]=$CDP_HOST_NAME
+        [cdphost_release]=$CDP_HOST_NAME
+        [cdphost_x86]=$CDP_HOST_NAME
+        [cdphost_x86_release]=$CDP_HOST_NAME
+        # TDD Runner
+        [tdd]=$TDDRUNNER_NAME/.TddRunner
+        [tdd_release]=$TDDRUNNER_NAME/.TddRunner
+        [tdd_x86]=$TDDRUNNER_NAME/.TddRunner
+        [tdd_x86_release]=$TDDRUNNER_NAME/.TddRunner
+    )
+
+tdd_run_deb () { _choose_adb_device $2 && _adb_shell am start -S -D -n $TDDRUNNER_NAME/.TddRunner --es name $1; }
+
+
     declare -g -A install_keys=(
         # OneRomanApp
         [one_rome]=$ONE_ROME_APK
@@ -199,11 +225,12 @@ _app_rm_log () { _adb_shell rm $1/CDPTraces.log; }
 
 _app_launch () { _adb_shell monkey -p $1 -c android.intent.category.LAUNCHER 1; }
 
+_app_launch_deb () { _adb_shell am start -S -D -n $1; }
+
 # android-app://com.microsoft.romanappinternal/http/microsoft.com 
 # https://developer.android.com/reference/android/content/Intent.html#URI_ANDROID_APP_SCHEME
 
 # adb -d shell am start -n com.microsoft.romanappinternal/com.microsoft.romanapp.LoginActivity
-
 
 _app_close () { _adb_shell am force-stop $1; }
 
@@ -246,6 +273,8 @@ pull_dir () { _choose_adb_device $2 && _execute _app_pull_dir app_keys $1; }
 
 # Open given application
 launch () { _choose_adb_device $2 && _execute _app_launch app_name_keys $1; }
+
+launch_deb () { _choose_adb_device $2 && _execute _app_launch_deb app_name_deb_keys $1; }
 
 # Close given application
 close () { _choose_adb_device $2 && _execute _app_close app_name_keys $1; }

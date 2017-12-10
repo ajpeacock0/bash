@@ -35,6 +35,7 @@ CDP_2_WIN="$D_WIN\git_repos\cdp_2"
 CDP_3_WIN="$D_WIN\git_repos\cdp_3"
 WORK_WIN="$D_WIN\work_files"
 MY_HOME_WIN="$C_WIN\cygwin64\home\\$LOCAL_WIN_USER"
+USER_DIR="$C/Users/$LOCAL_WIN_USER"
 
 # Application directories
 # Do not set this to "$C/tools/adt-bundle-windows-x86_64-20140702/sdk"
@@ -46,8 +47,10 @@ APK_SIGNER="$ANDROID_SDK_BUILD_TOOLS/apksigner.bat"
 ZIP_ALIGN="$ANDROID_SDK_BUILD_TOOLS/zipalign.exe"
 DEXDUMP="$ANDROID_SDK_BUILD_TOOLS/dexdump.exe"
 VS_HOME="$C/Program\ Files\ \(x86\)/Microsoft\ Visual\ Studio\ 14.0/Common7"
-CMAKE_HOME="$C/Users/$LOCAL_WIN_USER/AppData/Local/Android/sdk/cmake/3.6.4111459"
+CMAKE_HOME="$USER_DIR/AppData/Local/Android/sdk/cmake/3.6.4111459"
 TAEF="$C/testexecution/TE.exe"
+PYTHON="$C/Python36/python.exe"
+PIP="$C/Python36/Scripts/pip3.6.exe"
 # Due to the spaces in the path and the difference between aliases and functions, two seperate variables are required
 SUBL_ALIAS="$C/Program\ Files/Sublime\ Text\ 3/subl.exe"
 SUBL_FUNC="$C/Program Files/Sublime Text 3/subl.exe"
@@ -60,16 +63,16 @@ MS_OS="$GIT_REPOS/os/src"
 
 ######### DEPENDENT ON WHAT DIR YOU'RE IN ########
 
-ANDROID_SDK_BUILD_TOOLS="$C/Users/$LOCAL_WIN_USER/AppData/Local/Android/sdk/build-tools/25.0.0"
-WSL_HOME="$C/Users/$LOCAL_WIN_USER/AppData/Local/lxss/home/$LOCAL_WIN_USER"
-DOWNLOADS="$C/Users/$LOCAL_WIN_USER/Downloads"
+ANDROID_SDK_BUILD_TOOLS="$USER_DIR/AppData/Local/Android/sdk/build-tools/25.0.0"
+WSL_HOME="$USER_DIR/AppData/Local/lxss/home/$LOCAL_WIN_USER"
+DOWNLOADS="$USER_DIR/Downloads"
 
 # Local log directories
 SYS_CDP_WIN="\"$C_WIN\\Windows\\ServiceProfiles\\LocalService\\AppData\\Local\\ConnectedDevicesPlatform\""
 USER_CDP_WIN="\"$C_WIN\\Users\\$LOCAL_WIN_USER\\AppData\\Local\\ConnectedDevicesPlatform\""
 
 SYS_CDP="$C/Windows/ServiceProfiles/LocalService/AppData/Local/ConnectedDevicesPlatform"
-USER_CDP="$C/Users/$LOCAL_WIN_USER/AppData/Local/ConnectedDevicesPlatform"
+USER_CDP="$USER_DIR/AppData/Local/ConnectedDevicesPlatform"
 
 # VM Paths
 CDP1="\\\\DESKTOP-5MMAKOD"
