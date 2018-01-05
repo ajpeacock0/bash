@@ -218,8 +218,16 @@ rm_od ()
 
 alias reorder="git rebase -i HEAD~5"
 
+clear_merged_br () { git branch --merged | egrep -v "(^\*|master|dev)" | xargs git branch -d; }
+
 # View what commits have not been checked into master
 cl_br() { git log master.."$1"; }
+
+# Tag the branch then delete it, effectively keeping the branch around without it cluttering your list
+archive_br () { git tag archive/$1 $1 && git branch -D $1; }
+
+# Restore the archived branch
+restore_br () { git checkout -b $1 archive/$1; }
 
 #### Given File Change ####
 
