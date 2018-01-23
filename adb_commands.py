@@ -1,48 +1,51 @@
 import argparse
 import subprocess
 import os
-import shutil
+from secrets import HOME_IP as homeIp
+from secrets import HOME_PORT as homePort
+
 
 APP_NAME_KEYS = {
-    "one_rome" : "com.microsoft.oneRomanApp",
-    "cdphost" : "com.microsoft.cdp.cdphost",
-    "tdd" : "com.microsoft.tddrunner"
+    "one_rome": "com.microsoft.oneRomanApp",
+    "cdphost": "com.microsoft.cdp.cdphost",
+    "tdd": "com.microsoft.tddrunner"
 }
 
 APP_DIR_NAME_KEYS = {
-    "one_rome" : "samples/oneromanapp",
-    "cdphost" : "samples/CDPHost",
-    "tdd" : "test/tdd/runners"
+    "one_rome": "samples/oneromanapp",
+    "cdphost": "samples/CDPHost",
+    "tdd": "test/tdd/runners"
 }
 
 APP_TITLE_KEYS = {
-    "one_rome" : "oneRomanApp",
-    "cdphost" : "cdphost",
-    "tdd" : "tdd"
+    "one_rome": "oneRomanApp",
+    "cdphost": "cdphost",
+    "tdd": "tdd"
 }
 
 APP_MAIN_ACTIVITY_KEYS = {
-    "one_rome" : "MainActivity",
-    "cdphost" : "TODO",
-    "tdd" : "TddRunner"
+    "one_rome": "MainActivity",
+    "cdphost": "TODO",
+    "tdd": "TddRunner"
 }
 
 ARCH = {
-    "ARM" : "armeabi-v7a",
-    "X86" : "x86"
+    "ARM": "armeabi-v7a",
+    "X86": "x86"
 }
 
 FLAVOR = {
-    "DEBUG" : "debug",
-    "RELEASE" : "release"
+    "DEBUG": "debug",
+    "RELEASE": "release"
 }
 
 ADB_CONNECTION_TYPE = {
-    "VM" : '-e',
-    "USB" : '-d'
+    "VM": '-e',
+    "USB": '-d'
 }
 
 APK_DIR = "{root}/{dir_name}/android/app/build/outputs/apk/{flavor}/{app_title}-{arch}-{flavor}.apk"
+
 
 ### ADB command strings ###
 
@@ -68,8 +71,14 @@ PULL_LOG = "adb {connection_type} pull sdcard/Android/data/{app_name}/files/CDPT
 OS_VERSION = "adb {connection_type} shell getprop ro.build.version.release | tr -d \'\\r\'"
 LIST_PACKAGES = "adb {connection_type} shell pm list packages -f | sed -e 's/.*=//' | sort"
 LIST_APPS = "adb {connection_type} ls \"sdcard/Android/data\""
-LIST_DEVICES = "adb {connection_type} devices | grep \"device$\" | sed 's/ *device//g'"
+LIST_DEVICES = "adb devices | grep \"device$\" | sed 's/ *device//g'"
 ADB_RESTART = "adb kill-server && sleep 1 && adb start-server"
+ADB_CONNECT = " adb connect {ip}:{port}" + " && " + LIST_DEVICES
+ADB_INPUT_TEXT = "adb {connection_type} shell input text {text}"
+ADB_INPUT_POWER = " adb {connection_type} shell input keyevent 26"
+ADB_INPUT_BACK = " adb {connection_type} shell input keyevent 3"
+ADB_INPUT_OK = " adb {connection_type} shell input keyevent 66"
+ADB_INPUT_TAB = " adb {connection_type} shell input keyevent 61"
 
 class ArgParser:
     # Utility functions
@@ -90,9 +99,9 @@ class ArgParser:
         return ARCH["ARM"]
 
     def __get_connection_type(self, args):
-        if args.vm: 
+        if args.vm:
             return ADB_CONNECTION_TYPE["VM"]
-        if args.usb: 
+        if args.usb:
             return ADB_CONNECTION_TYPE["USB"]
         return ''
 
@@ -102,6 +111,8 @@ class ArgParser:
         parser.add_argument('application_name', type=str, help='TODO: Write help description')
         parser.add_argument(
             '--root_dir', help='TODO: Write help description', default=os.getcwd())
+        parser.add_argument(
+            '-l', '--launch', help='Launch after installing the APK', action='store_true')
 
         flavor_group = parser.add_mutually_exclusive_group()
         flavor_group.add_argument('--debug', help='Install debug version of the APK', action='store_true')
@@ -111,8 +122,6 @@ class ArgParser:
         arch_group.add_argument('--arm', help='Install the ARM version of the APK', action='store_true')
         arch_group.add_argument('--x86', help='Install the x86 version of the APK', action='store_true')
 
-        parser.add_argument(
-            '-l', '--launch', help='Launch after installing the APK', action='store_true')
 
     # TODO: Change this to be an argument to install
     def __setup_install_apk(self, subparsers, parent_parser):
@@ -165,6 +174,15 @@ class ArgParser:
     def __setup_restart(self, subparsers):
         parser = subparsers.add_parser('restart', help='Restart the ADB daemon')
 
+    def __setup_connect(self, subparsers):
+        parser = subparsers.add_parser('connect', help='TODO: Write help description')
+        parser.add_argument('--ip', type=str, help='TODO: Write help description', default=homeIp)
+        parser.add_argument('--port', type=str, help='TODO: Write help description. If you do not have a custom, enter the default of 5555', default=homePort)
+
+    def __setup_input_text(self, subparsers):
+        parser = subparsers.add_parser('input_text', help='Print the given text to the devices curser')
+        parser.add_argument('text', type=str)
+
     # Action functions
     def install(self, args):
         apk_path = APK_DIR.format(root=args.root_dir, dir_name=APP_DIR_NAME_KEYS[args.application_name], app_title=APP_TITLE_KEYS[args.application_name], arch=self.__get_arch(args), flavor=self.__get_flavour(args));
@@ -187,7 +205,7 @@ class ArgParser:
 
     def nuke(self, args):
         return APP_NUKE.format(connection_type=self.__get_connection_type(args), app_name=APP_NAME_KEYS[args.application_name])
-    
+
     def uninstall(self, args):
         return APP_CLOSE_UNINSTALL.format(connection_type=self.__get_connection_type(args), app_name=APP_NAME_KEYS[args.application_name])
 
@@ -216,12 +234,19 @@ class ArgParser:
     def restart(self, args):
         return ADB_RESTART
 
+    def connect(self, args):
+        return ADB_CONNECT.format(ip=args.ip, port=args.port)
+
+    def input_text(self, args):
+        return ADB_INPUT_TEXT.format(text=args.text)
+
     def __init__(self):
         """Parse arguments"""
         parser = argparse.ArgumentParser(description='Some description')
+        parser.add_argument('-v', '--verbose', help='Display the ADB commands used', action='store_true')
         subparsers = parser.add_subparsers(help='TODO: Write help description', dest='action')
 
-        parent_parser = argparse.ArgumentParser(add_help=False)                                 
+        parent_parser = argparse.ArgumentParser(add_help=False)
         # parent_parser.add_argument('--vm', help='If the ADB connection should be attempted over a VM connection / IP connect', action='store_true')
 
         # TODO: Handle the `notify` arg
@@ -245,7 +270,9 @@ class ArgParser:
         self.__setup_os_version(subparsers, parent_parser)
         self.__setup_ls(subparsers, parent_parser)
         self.__setup_restart(subparsers)
-        
+        self.__setup_connect(subparsers)
+        self.__setup_input_text(subparsers)
+
         args = parser.parse_args()
 
         # Feels like we are fighting with argparse by using adding parsers this way
@@ -256,17 +283,20 @@ class ArgParser:
 
         try:
             adb_command = getattr(self, args.action)(args)
-            print("Running: ", adb_command)
+            if args.verbose:
+                print("Running: ", adb_command)
             result = subprocess.call(adb_command, shell=True)
             assert result == 0
         except AttributeError:
             print("Given action " + args.action + " was not found.")
+
 
 def main():
     """Main"""
     arg_parser = ArgParser()
 
     return 0
+
 
 if __name__ == "__main__":
     exit(main())

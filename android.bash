@@ -74,8 +74,6 @@ set_android_arrays()
         [devbox]=$DEVBOX
     )
 
-
-
     declare -g -A adb_device_keys=(
         [vm]=-e
         [usb]=-d
@@ -87,29 +85,28 @@ set_android_arrays
 #### Python script aliases ####
 
 # ADB Commands shortcut
-ac () { python $MY_HOME_WIN\\adb_commands.py $@; }
+ac () { python $MY_HOME_WIN\\adb_commands.py $@ 2>&1; }
+
+# Install the app's APK using ADB
+adb_in() { python $MY_HOME_WIN\\adb_commands.py install --root_dir="$CURR_CDP_WIN" --launch $@ 2>&1; }
+
+# Shortcut for launching an application
+launch() { python $MY_HOME_WIN\\adb_commands.py launch $@ 2>&1; }
+
+# OneRomanApp sign in shortcut
+start_rome () { python $MY_HOME_WIN\\one_rome_sign_in.py $@ 2>&1; }
 
 # View logcat though a better view - https://github.com/JakeWharton/pidcat
 logcat () { python "$D_WIN\git_repos\pidcat\pidcat.py" $@; }
 
-os_version() { python $MY_HOME_WIN\\adb_commands.py os_version; }
-
 # Using gradle, builds the given task
-build() { python $MY_HOME_WIN\\build.py --root_dir="$CURR_CDP_WIN" $@; }
-
-# Install the app's APK using ADB
-adb_in() { python $MY_HOME_WIN\\adb_commands.py install --root_dir="$CURR_CDP_WIN" --launch $@; }
-
-# Uninstall the app's APK using ADB
-adb_un () { python $MY_HOME_WIN\\adb_commands.py uninstall $@; }
-
-adb_restart () { python $MY_HOME_WIN\\adb_commands.py restart; }
+build() { python $MY_HOME_WIN\\build.py --root_dir="$CURR_CDP_WIN" $@ 2>&1; }
 
 # Build gradle task
-build() { python $MY_HOME_WIN\\build.py --root_dir="$CURR_CDP_WIN" $@; }
+build() { python $MY_HOME_WIN\\build.py --root_dir="$CURR_CDP_WIN" $@ 2>&1; }
 
 # Run the givne TDD tests
-tdd_run() { python $MY_HOME_WIN\\adb_commands.py tdd --tests $@; }
+tdd_run() { python $MY_HOME_WIN\\adb_commands.py tdd --tests $@ 2>&1; }
 
 #### Python script aliases ####
 
@@ -153,7 +150,9 @@ adb_on () { _choose_adb_device $1 && _adb_power && _adb_swipe; }
 
 adb_off () { _choose_adb_device $1 && _adb_power; }
 
-adb_connect () { adb_restart && adb connect "$HOME_IP:$HOME_PORT" && adb devices; }
+adb_restart () { python $MY_HOME_WIN\\adb_commands.py restart $@ 2>&1; } 
+
+# adb_connect () { adb_restart; adb connect "$HOME_IP:$HOME_PORT" && adb devices; }
 
 adb_disconnect () { adb disconnect "$HOME_IP:$HOME_PORT" && adb devices; }
 
