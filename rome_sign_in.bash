@@ -63,7 +63,21 @@ enter_creds ()
 {
 _adb_input_text $CDP_MSA &&
 _adb_ok && # enter the MSA
-sleep 1 && # wait for password page to load
+sleep 2 && # wait for password page to load
+_adb_input_text $CDP_MSA_PASS &&
+_adb_ok && # enter the pass
+sleep 2.5 && # wait for MSA permissions to load
+_msa_accept; # accept Microsoft's MSA permissions
+}
+
+enter_user ()
+{
+_adb_input_text $CDP_MSA &&
+_adb_ok;
+}
+
+enter_pass ()
+{
 _adb_input_text $CDP_MSA_PASS &&
 _adb_ok && # enter the pass
 sleep 2.5 && # wait for MSA permissions to load

@@ -4,7 +4,6 @@ import os
 from secrets import HOME_IP as homeIp
 from secrets import HOME_PORT as homePort
 
-
 APP_NAME_KEYS = {
     "one_rome": "com.microsoft.oneRomanApp",
     "cdphost": "com.microsoft.cdp.cdphost",
@@ -53,6 +52,7 @@ ADB_ROOT = "adb {connection_type} root"
 
 # General app commands
 APP_LAUNCH = "adb {connection_type} shell am start -S -N {debug_flag} {app_name}/.{main_activity}"
+APP_LAUNCH_2 = "adb {connection_type} shell am start -S -n {debug_flag} {app_name}/.{main_activity}"
 APP_CLOSE = "adb {connection_type} shell am force-stop {app_name}"
 APP_NUKE = "adb {connection_type} shell pm clear {app_name}"
 APP_INSTALL = "adb {connection_type} install -d -r {apk}"
@@ -61,7 +61,7 @@ APP_UNINSTALL = "adb {connection_type} uninstall {app_name}"
 APP_CLOSE_UNINSTALL = APP_CLOSE + " && " + APP_UNINSTALL
 
 # TDD specific commands
-TDD_LAUNCH = APP_LAUNCH + " --es name {tests} --ez trx true --ez log true --ei repeat {loop}"
+TDD_LAUNCH = APP_LAUNCH_2 + " --es name {tests} --ez trx true --ez log true --ei repeat {loop}"
 
 # Log interaction commands
 RM_LOG = "adb {connection_type} shell rm sdcard/Android/data/{app_name}/files/CDPTraces.log"
@@ -244,7 +244,7 @@ class ArgParser:
         """Parse arguments"""
         parser = argparse.ArgumentParser(description='Some description')
         parser.add_argument('-v', '--verbose', help='Display the ADB commands used', action='store_true')
-        subparsers = parser.add_subparsers(help='TODO: Write help description', dest='action')
+        subparsers = parser.add_subparsers(help='TODO: Write help description', dest='cmd_action')
 
         parent_parser = argparse.ArgumentParser(add_help=False)
         # parent_parser.add_argument('--vm', help='If the ADB connection should be attempted over a VM connection / IP connect', action='store_true')
@@ -276,19 +276,19 @@ class ArgParser:
         args = parser.parse_args()
 
         # Feels like we are fighting with argparse by using adding parsers this way
-        if args.action is None:
+        if args.cmd_action is None:
             print("No action given.", end=' ')
             parser.print_help()
             return
 
         try:
-            adb_command = getattr(self, args.action)(args)
+            adb_command = getattr(self, args.cmd_action)(args)
             if args.verbose:
                 print("Running: ", adb_command)
             result = subprocess.call(adb_command, shell=True)
             assert result == 0
         except AttributeError:
-            print("Given action " + args.action + " was not found.")
+            print("Given action " + args.cmd_action + " was not found.")
 
 
 def main():

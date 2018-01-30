@@ -87,6 +87,9 @@ set_android_arrays
 # ADB Commands shortcut
 ac () { python $MY_HOME_WIN\\adb_commands.py $@ 2>&1; }
 
+# Gradle commands shortcut
+gdl() { python $MY_HOME_WIN\\gradle.py $@ --root_dir="$CURR_CDP_WIN" 2>&1; }
+
 # Install the app's APK using ADB
 adb_in() { python $MY_HOME_WIN\\adb_commands.py install --root_dir="$CURR_CDP_WIN" --launch $@ 2>&1; }
 
@@ -99,11 +102,8 @@ start_rome () { python $MY_HOME_WIN\\one_rome_sign_in.py $@ 2>&1; }
 # View logcat though a better view - https://github.com/JakeWharton/pidcat
 logcat () { python "$D_WIN\git_repos\pidcat\pidcat.py" $@; }
 
-# Using gradle, builds the given task
-build() { python $MY_HOME_WIN\\build.py --root_dir="$CURR_CDP_WIN" $@ 2>&1; }
-
 # Build gradle task
-build() { python $MY_HOME_WIN\\build.py --root_dir="$CURR_CDP_WIN" $@ 2>&1; }
+build() { python $MY_HOME_WIN\\gradle.py build --root_dir="$CURR_CDP_WIN" $@ 2>&1; }
 
 # Run the givne TDD tests
 tdd_run() { python $MY_HOME_WIN\\adb_commands.py tdd --tests $@ 2>&1; }
