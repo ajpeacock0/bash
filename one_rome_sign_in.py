@@ -50,7 +50,7 @@ def __rome_init_plat():
     time.sleep(1)
 
 
-def __rome_sign_in(sign_in=False, username='', password=''):
+def __rome_sign_in(username=None, password=None):
     # Click the tab open button
     __run_adb(ADB_TAP.format(x=co["pageMenu"].x, y=co["pageMenu"].y))
     # Click the "Login" tab
@@ -60,7 +60,7 @@ def __rome_sign_in(sign_in=False, username='', password=''):
     # Wait for Web view to load
     time.sleep(5)
     # Enter the MSA credentials if specified
-    if sign_in:
+    if username is not None and password is not None:
         __enter_creds(username, password)
     # Click the "Accept" button
     __msa_accept()
@@ -86,11 +86,14 @@ def __start_rome_launch():
     __run_adb(ADB_TAP.format(x=co["selectSystemButton"].x, y=co["selectSystemButton"].y))
 
 
-def start_rome():
+def start_rome(args):
     # Wait for application to launch
     time.sleep(1)
     __rome_init_plat()
-    __rome_sign_in(msaUsername, msaPassword)
+    if args.enter_creds:
+        __rome_sign_in(msaUsername, msaPassword)
+    else:
+        __rome_sign_in()
     __start_rome_watcher()
 
 
@@ -99,7 +102,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Some description')
     # TODO: Handle the `notify` arg
     parser.add_argument(
-        '-c, --enter_creds', help='TODO: IMP - If the credentials should be entered. Use this on a fresh install / wiped cache', action='store_true')
+        '-c', '--enter_creds', help='TODO: IMP - If the credentials should be entered. Use this on a fresh install / wiped cache', action='store_true')
 
     return parser.parse_args()
 
@@ -108,7 +111,7 @@ def main():
     """Main"""
     args = parse_args()
 
-    start_rome()
+    start_rome(args)
 
     return 0
 

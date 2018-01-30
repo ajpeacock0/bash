@@ -275,6 +275,9 @@ cdiff () { git diff $1^ $1; }
 # view all files given author has touched
 gtouch () { git log --no-merges --stat --author="$1" --name-only --pretty=format:"" | sort -u; }
 
+# View all the commits I have merged
+my_commits () { git log --author="anpea"; } 
+
 # Perform a "git grep" including the history of the files
 greph () { git rev-list --all | xargs git grep "$1"; }
 

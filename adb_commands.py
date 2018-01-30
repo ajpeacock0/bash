@@ -45,7 +45,6 @@ ADB_CONNECTION_TYPE = {
 
 APK_DIR = "{root}/{dir_name}/android/app/build/outputs/apk/{flavor}/{app_title}-{arch}-{flavor}.apk"
 
-
 ### ADB command strings ###
 
 ADB_ROOT = "adb {connection_type} root"

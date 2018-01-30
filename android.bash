@@ -25,33 +25,6 @@ set_android_arrays()
         # [tdd_x86_release]=$TODO
     )
 
-    declare -g -A clean_keys=(
-        # First Party SDK - DEPRECIATED
-        [3p]="$CURR_CDP/sdk/android/3p/build" 
-        # Xamarin SDK
-        [xam_sdk]="$XAMARIN_PROJ/ConnectedDevices.Xamarin.Droid/bin"
-        # OneRomanApp
-        [one_rome]="$CURR_CDP/samples/oneromanapp/android/app/build"
-        [one_rome_release]="$CURR_CDP/samples/oneromanapp/android/app/build"
-        [one_rome_x86]="$CURR_CDP/samples/oneromanapp/android/app/build"
-        [one_rome_x86_release]="$CURR_CDP/samples/oneromanapp/android/app/build"
-        # Xamarin RomanApp
-        [xam]="$XAMARIN_APP_DIR/ConnectedDevices.Xamarin.Droid.Sample/bin $XAMARIN_APP_DIR/ConnectedDevices.Xamarin.Droid.Sample/obj"
-        [xam_release]="$XAMARIN_PROJ/ConnectedDevices.Xamarin.Droid/bin"
-        [xam_x86]=$XAMARIN_APP
-        [xam_x86_release]=$XAMARIN_APP
-        # CDPHost
-        [cdphost]="$CURR_CDP/samples/CDPHost/android/app/build" 
-        [cdphost_release]="$CURR_CDP/samples/CDPHost/android/app/build" 
-        [cdphost_x86]="$CURR_CDP/samples/CDPHost/android/app/build" 
-        [cdphost_x86_release]="$CURR_CDP/samples/CDPHost/android/app/build" 
-        # TDD Runner
-        [tdd]="$CURR_CDP/test/tdd/runners/android/app/build"
-        [tdd_release]="$CURR_CDP/test/tdd/runners/android/app/build"
-        [tdd_x86]="$CURR_CDP/test/tdd/runners/android/app/build"
-        [tdd_x86_release]="$CURR_CDP/test/tdd/runners/android/app/build"
-    )
-
     declare -g -A xam_keys=(
         [dll]="/t:Rebuild /p:Configuration=Debug $XAM_DLL_CSPROJ"
         [dll_release]="/t:Rebuild /p:Configuration=Release $XAM_DLL_CSPROJ"
@@ -105,8 +78,13 @@ logcat () { python "$D_WIN\git_repos\pidcat\pidcat.py" $@; }
 # Build gradle task
 build() { python $MY_HOME_WIN\\gradle.py build --root_dir="$CURR_CDP_WIN" $@ 2>&1; }
 
+# Removes all files under build dirs
+clean() { python $MY_HOME_WIN\\gradle.py clean --root_dir="$CURR_CDP_WIN" $@ 2>&1; }
+
 # Run the givne TDD tests
 tdd_run() { python $MY_HOME_WIN\\adb_commands.py tdd --tests $@ 2>&1; }
+
+build_in_one_rome() { clean one_rome && build one_rome && ac install_apk --usb "$CURR_CDP_WIN/samples/oneromanapp/android/app/build/outputs/apk/debug/*.apk" 2>&1; }
 
 #### Python script aliases ####
 
@@ -177,8 +155,6 @@ _mvlog () { mv $1.log "$DDIR\\$1.log" && return 0; }
 
 _store_apk() { _dmkdir_apk && cp "$1" "$DDIR" && cd "$DDIR" && exp; }
 
-_clean () {  rm -rf $1; }
-
 #### Storing/Cleaning Files - Public Functions ####
 
 # $1: Name of VM/PC which has a shared directory containing CDPTraces.log
@@ -190,9 +166,6 @@ store_log () { _copy_log $1 && _dmkdir_log && _mvlog "CDPTraces_PC" && cd "$DDIR
 store () { pull_log $1 && _dmkdir_log && _mvlog "CDPTraces_android" && cd "$DDIR" && exp && if [ $# -eq 2 ]; then $(_copy_log $2); fi; }
 
 store_apk() { _choose_adb_device $2 && _execute _store_apk install_keys $1; }
-
-# Removes all files under build dirs
-clean() { _execute _clean clean_keys $1; }
 
 #### Building Android - Private Functions ####
 

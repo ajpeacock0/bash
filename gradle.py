@@ -17,22 +17,32 @@ BUILD_KEYS = {
     "tdd" : "tdd"
 }
 
-def parse_args():
-    """Parse arguments"""
-
-
-    return parser.parse_args()
-
-GRADLEW_COMMAND = "{root}\gradlew :{task}:assemble{type} -PabiToBuild={arch}"
-GRADLEW_TEST_COMMAND="{root}\gradlew :sdk_converged:assembleDebug :sdk_test:connected{type}AndroidTest -PinstrumentedTestBuildType={type}"
-
-# def __get_flavour(self, args):
-#     return 'Release' if args.release else 'Debug'
+CLEAN_KEYS = {
+    # Converged SDK
+    "conv" : "sdk/converged/projections/android/build",
+    # OneRomanApp
+    "one_rome" : "samples/oneromanapp/android/app/build",
+    # WNS Ping Test Application
+    "wnsping" : "samples/wnspingtest/app/build",
+    # CDP Host
+    "cdphost" : "samples/CDPHost/android/app/build",
+    # TDD Runner
+    "tdd" : "test/tdd/runners/android/app/build"
+}
 
 FLAVOR = {
     "DEBUG": "debug",
     "RELEASE": "release"
 }
+
+ARCH = {
+    "ARM": "armeabi-v7a",
+    "X86": "x86"
+}
+
+GRADLEW_COMMAND = "{root}\gradlew :{task}:assemble{type} -PabiToBuild={arch}"
+GRADLEW_TEST_COMMAND="{root}\gradlew :sdk_converged:assembleDebug :sdk_test:connected{type}AndroidTest -PinstrumentedTestBuildType={type}"
+CLEAN_COMMAND="rm -rf {root}/{build_dir}"
 
 class ArgParser:
     # Utility functions
@@ -44,6 +54,14 @@ class ArgParser:
         # Return default value of debug
         return FLAVOR["DEBUG"]
 
+    def __get_arch(self, args):
+        if args.arm:
+            return ARCH["ARM"]
+        if args.x86:
+            return ARCH["X86"]
+        # Return default value of arm
+        return ARCH["ARM"]
+
     # Argument setup functions
     def __setup_build(self, subparsers, parent_parser):
         parser = subparsers.add_parser('build', help='Build the given task.', parents = [parent_parser])
@@ -51,25 +69,38 @@ class ArgParser:
         parser.add_argument(
             '-n', '--notify', help='If a notification should be sent on build completion. NOTE: This has note been enabled yet', action='store_true')
         parser.add_argument(
-            '--release', help='If a notification should be sent on build completion', action='store_true')
-        parser.add_argument(
-            '--x86', help='If a notification should be sent on build completion', action='store_true')
+            'build_task', help='The task to run. The following are the valid tasks' + pprint.pformat(BUILD_KEYS.keys()))
+
+        flavor_group = parser.add_mutually_exclusive_group()
+        flavor_group.add_argument('--debug', help='Install debug version of the APK', action='store_true')
+        flavor_group.add_argument('--release', help='Install release version of the APK', action='store_true')
+
+        arch_group = parser.add_mutually_exclusive_group()
+        arch_group.add_argument('--arm', help='Install the ARM version of the APK', action='store_true')
+        arch_group.add_argument('--x86', help='Install the x86 version of the APK', action='store_true')
+        
+        parser.set_defaults(func=self.build)
+
+    def __setup_clean(self, subparsers, parent_parser):
+        parser = subparsers.add_parser('clean', help='Clean the given task\'s build directory.', parents = [parent_parser])
         parser.add_argument(
             'build_task', help='The task to run. The following are the valid tasks' + pprint.pformat(BUILD_KEYS.keys()))
 
-        parser.set_defaults(func=self.build)
+        parser.set_defaults(func=self.clean)
 
     # Action functions
     def build(self, args):
         if args.build_task == "sdk_test":
             return GRADLEW_TEST_COMMAND.format(root=args.root_dir, type=self.__get_flavour(args))
-        return GRADLEW_COMMAND.format(root=args.root_dir, task=BUILD_KEYS[args.build_task], type='Release' if args.release else 'Debug', arch='x86' if args.x86 else 'armeabi-v7a')
+        return GRADLEW_COMMAND.format(root=args.root_dir, task=BUILD_KEYS[args.build_task], type=self.__get_flavour(args), arch=self.__get_arch(args))
         
+    def clean(self, args):
+        return CLEAN_COMMAND.format(root=args.root_dir, build_dir=CLEAN_KEYS[args.build_task])
 
     def __init__(self):
         """Parse arguments"""
         parser = argparse.ArgumentParser(description='Some description')
-        parser.add_argument('-v', '--verbose', help='Display the ADB commands used', action='store_true')
+        parser.add_argument('-v', '--verbose', help='Display the gradle command used', action='store_true')
         subparsers = parser.add_subparsers()
 
         parent_parser = argparse.ArgumentParser(add_help=False)
@@ -77,6 +108,7 @@ class ArgParser:
 
         # General app
         self.__setup_build(subparsers, parent_parser)
+        self.__setup_clean(subparsers, parent_parser)
 
         args = parser.parse_args()
 
@@ -102,8 +134,6 @@ if __name__ == "__main__":
 
 # _gradlew () { dos2unix gradlew && $GRADLEW $1; }
 
-# _clean () {  rm -rf $1; }
-
 # _javap () { javap -classpath $CLASSES_JAR "com.microsoft.connecteddevices.$1"; }
 
 # _build_jni () { cd "$CON_DEV_DIR" && "$JAVAH" -v -classpath "$JNI_CLASSPATH" com.microsoft.connecteddevices.$1 && cp "$CON_DEV_DIR\com_microsoft_connecteddevices_$1.h" "$CDP_JNI_DIR\com_microsoft_connecteddevices_$1.h"; }
@@ -115,6 +145,5 @@ if __name__ == "__main__":
 # # build_in() { build $1 && adb_in $1 $2; }
 
 # # Removes all files under build dirs
-# clean() { _execute _clean clean_keys $1; }
 
 # build_jni() { _execute _build_jni jni_keys $1; }

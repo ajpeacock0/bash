@@ -54,8 +54,8 @@ declare -A script_keys=(
   [main]="$MY_HOME_WIN/main.bash"
   [vars]="$MY_HOME_WIN/variables.bash"
   [specific]="$MY_HOME_WIN/specific.bash"
-  [sign_in]="$MY_HOME_WIN/rome_sign_in.bash"
-  [build]="$MY_HOME_WIN/build.py"
+  [sign_in]="$MY_HOME_WIN/one_rome_sign_in.py"
+  [gradle]="$MY_HOME_WIN/gradle.py"
   [adb]="$MY_HOME_WIN/adb_commands.py"
 )
 
