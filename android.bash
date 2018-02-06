@@ -84,7 +84,9 @@ clean() { python $MY_HOME_WIN\\gradle.py clean --root_dir="$CURR_CDP_WIN" $@ 2>&
 # Run the givne TDD tests
 tdd_run() { python $MY_HOME_WIN\\adb_commands.py tdd --tests $@ 2>&1; }
 
-build_in_one_rome() { clean one_rome && build one_rome && ac install_apk --usb "$CURR_CDP_WIN/samples/oneromanapp/android/app/build/outputs/apk/debug/*.apk" 2>&1; }
+in_one_rome() { ac install_apk "$CURR_CDP_WIN/samples/oneromanapp/android/app/build/outputs/apk/arm/debug/*.apk" $@ 2>&1; }
+
+build_in_one_rome() { clean one_rome && build one_rome && in_one_rome $@ 2>&1; }
 
 #### Python script aliases ####
 

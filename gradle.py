@@ -1,33 +1,32 @@
 import argparse
 import subprocess
 import os
-import shutil
 import pprint
 
 BUILD_KEYS = {
     # Converged SDK
-    "conv" : "sdk_converged",
+    "conv": "sdk_converged",
     # OneRomanApp
-    "one_rome" : "oneRomanApp",
+    "one_rome": "oneRomanApp",
     # WNS Ping Test Application
-    "wnsping" : "wnspingtest",
+    "wnsping": "wnspingtest",
     # CDP Host
-    "cdphost" : "cdphost",
+    "cdphost": "cdphost",
     # TDD Runner
-    "tdd" : "tdd"
+    "tdd": "tdd"
 }
 
 CLEAN_KEYS = {
     # Converged SDK
-    "conv" : "sdk/converged/projections/android/build",
+    "conv": "sdk/converged/projections/android/build",
     # OneRomanApp
-    "one_rome" : "samples/oneromanapp/android/app/build",
+    "one_rome": "samples/oneromanapp/android/app/build",
     # WNS Ping Test Application
-    "wnsping" : "samples/wnspingtest/app/build",
+    "wnsping": "samples/wnspingtest/app/build",
     # CDP Host
-    "cdphost" : "samples/CDPHost/android/app/build",
+    "cdphost": "samples/CDPHost/android/app/build",
     # TDD Runner
-    "tdd" : "test/tdd/runners/android/app/build"
+    "tdd": "test/tdd/runners/android/app/build"
 }
 
 FLAVOR = {
@@ -41,8 +40,8 @@ ARCH = {
 }
 
 GRADLEW_COMMAND = "{root}\gradlew :{task}:assemble{type} -PabiToBuild={arch}"
-GRADLEW_TEST_COMMAND="{root}\gradlew :sdk_converged:assembleDebug :sdk_test:connected{type}AndroidTest -PinstrumentedTestBuildType={type}"
-CLEAN_COMMAND="rm -rf {root}/{build_dir}"
+GRADLEW_TEST_COMMAND = "{root}\gradlew :sdk_converged:assembleDebug :sdk_test:connected{type}AndroidTest -PinstrumentedTestBuildType={type}"
+CLEAN_COMMAND = "rm -rf {root}/{build_dir}"
 
 class ArgParser:
     # Utility functions
