@@ -41,6 +41,7 @@ USER_DIR="$C/Users/$LOCAL_WIN_USER"
 # Do not set this to "$C/tools/adt-bundle-windows-x86_64-20140702/sdk"
 ANDROID_SDK="$C/Program Files (x86)/Android/android-sdk"
 ADB="$ANDROID_SDK/platform-tools/adb"
+MONITOR="$ANDROID_SDK/tools/lib/monitor-x86_64/monitor.exe"
 XDE="$C/Program Files (x86)/Microsoft XDE/10.0.10586.0/XDE.exe"
 MSBUILD="$C/Program Files (x86)/MSBuild/14.0/Bin/MSBuild.exe"
 APK_SIGNER="$ANDROID_SDK_BUILD_TOOLS/apksigner.bat"
@@ -55,11 +56,15 @@ PIP="$C/Python36/Scripts/pip3.6.exe"
 SUBL_ALIAS="$C/Program\ Files/Sublime\ Text\ 3/subl.exe"
 SUBL_FUNC="$C/Program Files/Sublime Text 3/subl.exe"
 
+
+
 # Git Repo locations of importanace
 COA="$GIT_REPOS/CortanaAndroid"
 PROJECT_ROME_GITHUB="$GIT_REPOS/project-rome"
 CDP_PINGPONG="$GIT_REPOS/CDPPingPong"
-MS_OS="$GIT_REPOS/os/src"
+MS_OS="$F/os/src"
+CDP2OS="$GIT_REPOS/cdp2os"
+MMX="$GIT_REPOS/Shell.MMX/android/components/AgentsAPI"
 
 ######### DEPENDENT ON WHAT DIR YOU'RE IN ########
 

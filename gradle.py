@@ -5,7 +5,7 @@ import pprint
 
 BUILD_KEYS = {
     # Converged SDK
-    "conv": "sdk_converged",
+    "conv": "connecteddevices-sdk",
     # OneRomanApp
     "one_rome": "oneRomanApp",
     # WNS Ping Test Application
@@ -35,12 +35,12 @@ FLAVOR = {
 }
 
 ARCH = {
-    "ARM": "armeabi-v7a",
+    "ARM": "arm",
     "X86": "x86"
 }
 
-GRADLEW_COMMAND = "{root}\gradlew :{task}:assemble{type} -PabiToBuild={arch}"
-GRADLEW_TEST_COMMAND = "{root}\gradlew :sdk_converged:assembleDebug :sdk_test:connected{type}AndroidTest -PinstrumentedTestBuildType={type}"
+GRADLEW_COMMAND = "{root}\gradlew :{task}:assemble{arch}{type}"
+GRADLEW_TEST_COMMAND = "{root}\gradlew :sdk_test:connected{arch}{type}AndroidTest -PinstrumentedTestBuildType={type}"
 CLEAN_COMMAND = "rm -rf {root}/{build_dir}"
 
 class ArgParser:
@@ -90,7 +90,7 @@ class ArgParser:
     # Action functions
     def build(self, args):
         if args.build_task == "sdk_test":
-            return GRADLEW_TEST_COMMAND.format(root=args.root_dir, type=self.__get_flavour(args))
+            return GRADLEW_TEST_COMMAND.format(root=args.root_dir, arch=self.__get_arch(args), type=self.__get_flavour(args))
         return GRADLEW_COMMAND.format(root=args.root_dir, task=BUILD_KEYS[args.build_task], type=self.__get_flavour(args), arch=self.__get_arch(args))
         
     def clean(self, args):
@@ -134,10 +134,6 @@ if __name__ == "__main__":
 # _gradlew () { dos2unix gradlew && $GRADLEW $1; }
 
 # _javap () { javap -classpath $CLASSES_JAR "com.microsoft.connecteddevices.$1"; }
-
-# _build_jni () { cd "$CON_DEV_DIR" && "$JAVAH" -v -classpath "$JNI_CLASSPATH" com.microsoft.connecteddevices.$1 && cp "$CON_DEV_DIR\com_microsoft_connecteddevices_$1.h" "$CDP_JNI_DIR\com_microsoft_connecteddevices_$1.h"; }
-
-# _build_jni_test () { cd "$CON_TEST_DIR" && "$JAVAH" -v -classpath "$JNI_CLASSPATH" com.microsoft.connecteddevices.$1 && cp "$CON_TEST_DIR\com_microsoft_connecteddevices_$1.h" "$CDP_JNI_DIR\com_microsoft_connecteddevices_$1.h"; }
 
 # #### Building Android - Public Functions ####
 

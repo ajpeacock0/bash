@@ -14,7 +14,9 @@ alias log="git log --name-status"
 alias fe="git fetch -v"
 
 # Shortcut + enable Perl regex grep
-alias gg="git grep -P "
+alias gg="git grep --perl-regexp --line-number "
+
+alias gg-w="git grep --perl-regexp --line-number --word-regexp "
 
 gg_uniq () { git grep -P $1 | awk -F: '{print $1}' | uniq; }
 

@@ -23,6 +23,8 @@ declare -A nav_keys=(
   [github]=$PROJECT_ROME_GITHUB
   [pingpong]=$CDP_PINGPONG
   [os]=$MS_OS
+  [cdp2os]=$CDP2OS
+  [mmx]=$MMX
   # notes
   [notes]=$NOTES
   [work]=$WORK

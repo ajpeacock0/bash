@@ -7,7 +7,8 @@ from secrets import HOME_PORT as homePort
 APP_NAME_KEYS = {
     "one_rome": "com.microsoft.oneRomanApp",
     "cdphost": "com.microsoft.cdp.cdphost",
-    "tdd": "com.microsoft.tddrunner"
+    "tdd": "com.microsoft.tddrunner",
+    "graph": "com.microsoft.office365.connectmicrosoftgraph"
 }
 
 APP_DIR_NAME_KEYS = {
@@ -15,6 +16,7 @@ APP_DIR_NAME_KEYS = {
     "cdphost": "samples/CDPHost",
     "tdd": "test/tdd/runners"
 }
+# D:\git_repos\cdp_2\test\tdd\runners\android\app\build\outputs\apk\arm\debug
 
 APP_TITLE_KEYS = {
     "one_rome": "oneRomanApp",
@@ -25,11 +27,13 @@ APP_TITLE_KEYS = {
 APP_MAIN_ACTIVITY_KEYS = {
     "one_rome": "MainActivity",
     "cdphost": "TODO",
-    "tdd": "TddRunner"
+    "tdd": "TddRunner",
+    "graph": "ConnectActivity"
 }
 
 ARCH = {
-    "ARM": "armeabi-v7a",
+    # "ARM": "armeabi-v7a",
+    "ARM": "arm",
     "X86": "x86"
 }
 
@@ -43,7 +47,7 @@ ADB_CONNECTION_TYPE = {
     "USB": '-d'
 }
 
-APK_DIR = "{root}/{dir_name}/android/app/build/outputs/apk/{flavor}/{app_title}-{arch}-{flavor}.apk"
+APK_DIR = "{root}/{dir_name}/android/app/build/outputs/apk/{arch}/{flavor}/{app_title}-{arch}-{flavor}.apk"
 
 ### ADB command strings ###
 
