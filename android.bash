@@ -84,6 +84,9 @@ clean() { python $MY_HOME_WIN\\gradle.py clean --root_dir="$CURR_CDP_WIN" $@ 2>&
 # Run the givne TDD tests
 tdd_run() { python $MY_HOME_WIN\\adb_commands.py tdd --tests $@ 2>&1; }
 
+# Removes all files under build dirs
+build_jni() { python $MY_HOME_WIN\\javah.py javah --root_dir="$CURR_CDP_WIN" $@ 2>&1; }
+
 in_one_rome() { ac install_apk "$CURR_CDP_WIN/samples/oneromanapp/android/app/build/outputs/apk/arm/debug/*.apk" $@ 2>&1; }
 
 build_in_one_rome() { clean one_rome && build one_rome && in_one_rome $@ 2>&1; }

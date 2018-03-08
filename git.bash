@@ -114,7 +114,7 @@ alias reset="git reset HEAD~"
 # Discard all non-commited changes
 alias discard="git stash save --keep-index && git stash drop"
 
-# Reset back to the state before the last executed command. Use as an "undo" command
+# Reset back to the state before the last executed git command. Use as an "undo" command
 alias gundo="git reset HEAD@{1}"
 
 # Undo last commit by reseting and discard the changes

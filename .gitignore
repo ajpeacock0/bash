@@ -8,3 +8,5 @@
 .ssh/
 .viminfo
 secrets.bash
+secrets.py
+history.txt

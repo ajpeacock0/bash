@@ -241,7 +241,7 @@ class ArgParser:
         return ADB_CONNECT.format(ip=args.ip, port=args.port)
 
     def input_text(self, args):
-        return ADB_INPUT_TEXT.format(text=args.text)
+        return ADB_INPUT_TEXT.format(connection_type=self.__get_connection_type(args), text=args.text)
 
     def __init__(self):
         """Parse arguments"""
