@@ -13,7 +13,3 @@ source "${HOME}/android.bash"
 if [ -f "${HOME}/specific.bash" ]; then
   source "${HOME}/specific.bash"
 fi
-
-if [ -f "${HOME}/scripts.bash" ]; then
-  source "${HOME}/scripts.bash"
-fi

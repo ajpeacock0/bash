@@ -1,0 +1,4 @@
+[submodule "adb_android"]
+	path = adb_android
+	url = https://github.com/ajpeacock0/adb_android.git
+	branch = master

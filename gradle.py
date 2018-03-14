@@ -41,6 +41,16 @@ ARCH = {
 
 GRADLEW_COMMAND = "{root}\gradlew :{task}:assemble{arch}{type}"
 GRADLEW_TEST_COMMAND = "{root}\gradlew :sdk_test:connected{arch}{type}AndroidTest -PinstrumentedTestBuildType={type}"
+GRADLEW_BUILD_ONE_ROMANAPP_TEST_COMMAND = "{root}\gradlew :oneRomanApp:assemble{arch}{type}AndroidTest"
+GRADLEW_BUILD_AND_RUN_ONE_ROMANAPP_TEST_COMMAND = "{root}\gradlew :oneRomanApp:connected{arch}{type}AndroidTest"
+
+# $adbTestFilter = "-e package com.microsoft.connecteddevices"
+# if ((-not ([string]::IsNullOrEmpty($SdkTestFilter)))) {
+#     $adbTestFilter = "-e class $SdkTestFilter"
+# }
+
+# $adbOutput = RunAdb shell am instrument -w -r $adbTestFilter com.microsoft.connecteddevices.test/android.support.test.runner.AndroidJUnitRunner
+
 CLEAN_COMMAND = "rm -rf {root}/{build_dir}"
 
 class ArgParser:
@@ -91,6 +101,8 @@ class ArgParser:
     def build(self, args):
         if args.build_task == "sdk_test":
             return GRADLEW_TEST_COMMAND.format(root=args.root_dir, arch=self.__get_arch(args), type=self.__get_flavour(args))
+        if args.build_task == "one_rome_test":
+            return GRADLEW_BUILD_ONE_ROMANAPP_TEST_COMMAND.format(root=args.root_dir, arch=self.__get_arch(args), type=self.__get_flavour(args))
         return GRADLEW_COMMAND.format(root=args.root_dir, task=BUILD_KEYS[args.build_task], type=self.__get_flavour(args), arch=self.__get_arch(args))
         
     def clean(self, args):
@@ -99,7 +111,7 @@ class ArgParser:
     def __init__(self):
         """Parse arguments"""
         parser = argparse.ArgumentParser(description='Some description')
-        parser.add_argument('-v', '--verbose', help='Display the gradle command used', action='store_true')
+        parser.add_argument('-q', '--quiet', help='Do not display the gradle command used', action='store_true')
         subparsers = parser.add_subparsers()
 
         parent_parser = argparse.ArgumentParser(add_help=False)
@@ -113,7 +125,7 @@ class ArgParser:
 
         try:
             command = args.func(args)
-            if args.verbose:
+            if args.quiet is not True:
                 print("Running: ", command)
             result = subprocess.call(command, shell=True)
             assert result == 0

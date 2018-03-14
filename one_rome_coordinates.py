@@ -12,7 +12,7 @@ oneplus = {
     "launchPage": Point(200, 850),
     "initializeButton": Point(350, 650),
     "signinButton": Point(300, 1800),
-    "accept_MSA_permissions": Point(700, 1200),
+    "accept_MSA_permissions": Point(700, 1650),
     "startWatcherButton": Point(350, 500),
     "selectSystemButton": Point(500, 500)
 }

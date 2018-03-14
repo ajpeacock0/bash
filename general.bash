@@ -108,8 +108,8 @@ display () { typeset -f "$1"; }
 bind Space:magic-space
 
 # Increase HISTSIZE from 1000 to 10000
-HISTSIZE=10000
-HISTFILESIZE=11000
+HISTSIZE=100000
+HISTFILESIZE=110000
 # Save timestamp in the history file
 HISTTIMEFORMAT="%F %T "
 # Don't store duplicates + ifnore commands starting with space

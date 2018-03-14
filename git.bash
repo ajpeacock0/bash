@@ -178,6 +178,12 @@ rebbr() { git fetch origin && git rebase origin/$(currbr) --stat; }
 # Fetches origin and rebases ontop on master
 rebor() { git fetch origin && git rebase origin/master --stat; }
 
+# This will now checkout to the middle commit between now and the last known good commit. If the build succeeds, use `git bisect good`. If it fails, use ``git bisect bad`
+bisect() { git bisect start && git bisect bad && git bisect good $1; }
+
+# Note: Reset, rebase and merge all save your original HEAD pointer to ORIG_HEAD. Thus these commands have been run since the rebase you're trying to undo then you'll have to use the reflog.
+undo_rebase() { git reset --hard ORIG_HEAD; }
+
 # Fetches origin and rebases ontop on master and switches to origin/master
 rebmaster() { git fetch origin && git rebase origin/master --stat && git checkout origin/master; }
 
@@ -287,4 +293,21 @@ get_unstaged_files() { git diff --name-only; }
 
 get_staged_files() { git diff --staged --name-only --diff-filter=ACMRT; }
 
-# git worktree add ../cdp_3 master
+untrack() { git rm -r --cached $1; } 
+
+rm_untracked () 
+{ 
+    echo "Comfirm deletion of the following files? (Remember all non-added files will be removed)"
+    git clean -n &&
+    while true; do
+        read -s -n 1 C
+        case $C in
+            [y]* ) git clean -f; break;;
+            [n]* ) break;;
+            * ) echo "Please answer y or n.";;
+        esac
+    done
+}
+
+# Adds the worktree with the given directory name. Run this in the main repo
+add_worktree() { git worktree prune && git worktree add ../$1 master; }

@@ -60,6 +60,8 @@ set_android_arrays
 # ADB Commands shortcut
 ac () { python $MY_HOME_WIN\\adb_commands.py $@ 2>&1; }
 
+ac_outdated () { python $MY_HOME_WIN\\adb_commands_outdated.py $@ 2>&1; }
+
 # Gradle commands shortcut
 gdl() { python $MY_HOME_WIN\\gradle.py $@ --root_dir="$CURR_CDP_WIN" 2>&1; }
 
@@ -70,7 +72,7 @@ adb_in() { python $MY_HOME_WIN\\adb_commands.py install --root_dir="$CURR_CDP_WI
 launch() { python $MY_HOME_WIN\\adb_commands.py launch $@ 2>&1; }
 
 # OneRomanApp sign in shortcut
-start_rome () { python $MY_HOME_WIN\\one_rome_sign_in.py $@ 2>&1; }
+ora () { python $MY_HOME_WIN\\one_rome_sign_in.py $@ 2>&1; }
 
 # View logcat though a better view - https://github.com/JakeWharton/pidcat
 logcat () { python "$D_WIN\git_repos\pidcat\pidcat.py" $@; }
@@ -87,9 +89,10 @@ tdd_run() { python $MY_HOME_WIN\\adb_commands.py tdd --tests $@ 2>&1; }
 # Removes all files under build dirs
 build_jni() { python $MY_HOME_WIN\\javah.py javah --root_dir="$CURR_CDP_WIN" $@ 2>&1; }
 
-in_one_rome() { ac install_apk "$CURR_CDP_WIN/samples/oneromanapp/android/app/build/outputs/apk/arm/debug/*.apk" $@ 2>&1; }
+build_in() { clean $1 && build $1 && ac install $1 $@ 2>&1; }
 
-build_in_one_rome() { clean one_rome && build one_rome && in_one_rome $@ 2>&1; }
+# one_rome_test. If there are any changes to the app itself, you need to generate the APK seperatley. This is because a new ORA APK is not generated with `build one_rome_test`
+build_test() { build one_rome && build one_rome_test && ac install one_rome $@ && ac install one_rome_test $@ 2>&1; }
 
 #### Python script aliases ####
 
@@ -118,14 +121,6 @@ _adb_shell () { _adb_run shell "$@"; }
 _adb_swipe () { _adb_shell input swipe 200 900 200 100 100; }
 
 _adb_power () { _adb_shell input keyevent 26; }
-
-_adb_input_text () { _adb_shell input text "$1"; }
-
-_adb_back () { _adb_shell input keyevent 3; }
-
-_adb_ok () { _adb_shell input keyevent 66; }
-
-_adb_tab () { _adb_shell input keyevent 61; }
 
 #### Android Viewing + Interaction - Public Functions ####
 

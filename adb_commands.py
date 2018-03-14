@@ -1,39 +1,32 @@
 import argparse
-import subprocess
 import os
+import glob
+import time
 from secrets import HOME_IP as homeIp
 from secrets import HOME_PORT as homePort
+from adb_android import adb_android as adb
 
 APP_NAME_KEYS = {
     "one_rome": "com.microsoft.oneRomanApp",
-    "cdphost": "com.microsoft.cdp.cdphost",
+    "one_rome_test": "com.microsoft.oneRomanApp",
     "tdd": "com.microsoft.tddrunner",
     "graph": "com.microsoft.office365.connectmicrosoftgraph"
 }
 
 APP_DIR_NAME_KEYS = {
-    "one_rome": "samples/oneromanapp",
-    "cdphost": "samples/CDPHost",
-    "tdd": "test/tdd/runners"
-}
-# D:\git_repos\cdp_2\test\tdd\runners\android\app\build\outputs\apk\arm\debug
-
-APP_TITLE_KEYS = {
-    "one_rome": "oneRomanApp",
-    "cdphost": "cdphost",
-    "tdd": "tdd"
+    "one_rome": "samples/oneromanapp/android/app/projects/full/build/outputs/apk",
+    "one_rome_test": "samples/oneromanapp/android/app/projects/full/build/outputs/apk/androidTest",
+    "tdd": "test/tdd/runners/android/app/build/outputs/apk"
 }
 
 APP_MAIN_ACTIVITY_KEYS = {
     "one_rome": "MainActivity",
-    "cdphost": "TODO",
     "tdd": "TddRunner",
     "graph": "ConnectActivity"
 }
 
 ARCH = {
-    # "ARM": "armeabi-v7a",
-    "ARM": "arm",
+    "ARM": "arm",  # previous value was "armeabi-v7a",
     "X86": "x86"
 }
 
@@ -42,46 +35,20 @@ FLAVOR = {
     "RELEASE": "release"
 }
 
-ADB_CONNECTION_TYPE = {
-    "VM": '-e',
-    "USB": '-d'
-}
+# ADB command strings
+APK_DIR = "{root}/{dir_name}/{arch}/{flavor}"
+CDP_SRC_FILES_PATH = "sdcard/Android/data/{app_name}/files"
+CDP_DEST_FILES_NAME = "android_files"
+CDP_SRC_LOG_NAME = "CDPTraces.log"
+CDP_DEST_LOG_NAME = "CDPTraces_android.log"
+TDD_FLAGS = "--es name {tests} --ez trx true --ez log true --ei repeat {loop}"
 
-APK_DIR = "{root}/{dir_name}/android/app/build/outputs/apk/{arch}/{flavor}/{app_title}-{arch}-{flavor}.apk"
-
-### ADB command strings ###
-
-ADB_ROOT = "adb {connection_type} root"
-
-# General app commands
-APP_LAUNCH = "adb {connection_type} shell am start -S -N {debug_flag} {app_name}/.{main_activity}"
-APP_LAUNCH_2 = "adb {connection_type} shell am start -S -n {debug_flag} {app_name}/.{main_activity}"
-APP_CLOSE = "adb {connection_type} shell am force-stop {app_name}"
-APP_NUKE = "adb {connection_type} shell pm clear {app_name}"
-APP_INSTALL = "adb {connection_type} install -d -r {apk}"
-APP_CLOSE_INSTALL = APP_CLOSE + " && " + APP_INSTALL
-APP_UNINSTALL = "adb {connection_type} uninstall {app_name}"
-APP_CLOSE_UNINSTALL = APP_CLOSE + " && " + APP_UNINSTALL
-
-# TDD specific commands
-TDD_LAUNCH = APP_LAUNCH_2 + " --es name {tests} --ez trx true --ez log true --ei repeat {loop}"
-
-# Log interaction commands
-RM_LOG = "adb {connection_type} shell rm sdcard/Android/data/{app_name}/files/CDPTraces.log"
-PULL_LOG = "adb {connection_type} pull sdcard/Android/data/{app_name}/files/CDPTraces.log CDPTraces_android.log"
-
-# Utility commands
-OS_VERSION = "adb {connection_type} shell getprop ro.build.version.release | tr -d \'\\r\'"
-LIST_PACKAGES = "adb {connection_type} shell pm list packages -f | sed -e 's/.*=//' | sort"
-LIST_APPS = "adb {connection_type} ls \"sdcard/Android/data\""
-LIST_DEVICES = "adb devices | grep \"device$\" | sed 's/ *device//g'"
-ADB_RESTART = "adb kill-server && sleep 1 && adb start-server"
-ADB_CONNECT = " adb connect {ip}:{port}" + " && " + LIST_DEVICES
-ADB_INPUT_TEXT = "adb {connection_type} shell input text {text}"
-ADB_INPUT_POWER = " adb {connection_type} shell input keyevent 26"
-ADB_INPUT_BACK = " adb {connection_type} shell input keyevent 3"
-ADB_INPUT_OK = " adb {connection_type} shell input keyevent 66"
-ADB_INPUT_TAB = " adb {connection_type} shell input keyevent 61"
+ADB_INSTALL_REPLACE_EXISTING_APP_FLAG = '-r'
+ADB_INSTALL_ALLOW_DOWNGRADE_FLAG = '-d'
+ADB_LAUNCH_STOP_FLAG = '-S'
+ADB_LAUNCH_DEBUG_FLAG = '-D'
+# Note: Only available on Android 7.0+ devices
+ADB_LAUNCH_NATIVE_DEBUGGING_FLAG = '-N'
 
 class ArgParser:
     # Utility functions
@@ -101,21 +68,29 @@ class ArgParser:
         # Return default value of arm
         return ARCH["ARM"]
 
-    def __get_connection_type(self, args):
-        if args.vm:
-            return ADB_CONNECTION_TYPE["VM"]
-        if args.usb:
-            return ADB_CONNECTION_TYPE["USB"]
+    def __get_debug_flag(self, args):
+        if args.debug:
+            return ADB_LAUNCH_DEBUG_FLAG
         return ''
+
+    def __find_most_recent_apk(self, searchDir):
+        # Return the newest file under the given directory with the APK extension
+        os.chdir(searchDir)
+        most_recent_time = time.gmtime(0)
+        most_recent_file = 'NO_FILE_FOUND'
+        for file in glob.glob("*.apk"):
+            mtime = time.gmtime(os.path.getmtime(file))
+            if mtime > most_recent_time:
+                most_recent_time
+                most_recent_file = file
+        return most_recent_file
 
     # Argument setup functions
     def __setup_install(self, subparsers, parent_parser):
-        parser = subparsers.add_parser('install', help='TODO: Write help description', parents = [parent_parser])
-        parser.add_argument('application_name', type=str, help='TODO: Write help description')
-        parser.add_argument(
-            '--root_dir', help='TODO: Write help description', default=os.getcwd())
-        parser.add_argument(
-            '-l', '--launch', help='Launch after installing the APK', action='store_true')
+        parser = subparsers.add_parser('install', help='Use a shortcut name to install the APK at its known location. For generic APKs, use `install_apk`', parents = [parent_parser])
+        parser.add_argument('application_name', type=str, help='Shortcut name of the Android application')
+        parser.add_argument('--root_dir', help='The root CDP directory to search for the APKs', default=os.getcwd())
+        parser.add_argument('-l', '--launch', help='Launch after installing the APK', action='store_true')
 
         flavor_group = parser.add_mutually_exclusive_group()
         flavor_group.add_argument('--debug', help='Install debug version of the APK', action='store_true')
@@ -125,32 +100,47 @@ class ArgParser:
         arch_group.add_argument('--arm', help='Install the ARM version of the APK', action='store_true')
         arch_group.add_argument('--x86', help='Install the x86 version of the APK', action='store_true')
 
+        parser.set_defaults(func=self.install)
 
-    # TODO: Change this to be an argument to install
     def __setup_install_apk(self, subparsers, parent_parser):
-        parser = subparsers.add_parser('install_apk', help='TODO: Write help description', parents = [parent_parser])
-        parser.add_argument('apk_path', type=str, help='TODO: Write help description')
-        parser.add_argument(
-            '-l', '--launch', help='Launch after installing the APK', action='store_true')
+        parser = subparsers.add_parser('install_apk', help='Installs a specific apk by providing a direct path.', parents = [parent_parser])
+        parser.add_argument('apk_path', type=str, help='Path to the APK.')
+        parser.add_argument('-l', '--launch', help='Launch after installing the APK', action='store_true')
+
+        parser.set_defaults(func=self.install_apk)
 
     def __setup_launch(self, subparsers, parent_parser):
         parser = subparsers.add_parser('launch', help='Open given application', parents = [parent_parser])
-        parser.add_argument('application_name', type=str, help='TODO: Write help description')
-        parser.add_argument('-d', '--debug', help='TODO: THIS HAS NOT BEEN IMPLMENENTED', action='store_true')
-        parser.add_argument('-c', '--close', help='TODO: THIS HAS NOT BEEN IMPLMENENTED', action='store_true')
+        parser.add_argument('application_name', type=str, help='Shortcut name of the Android application')
+        parser.add_argument('-d', '--debug', help='Launch the application with the debug flag enabled so that it will wait for a debugger to be attached.', action='store_true')
+
+        parser.set_defaults(func=self.launch)
     
     def __setup_close(self, subparsers, parent_parser):
         parser = subparsers.add_parser('close', help='Close given application', parents = [parent_parser])
-        parser.add_argument('application_name', type=str, help='TODO: Write help description')
+        parser.add_argument('application_name', type=str, help='Shortcut name of the Android application')
         parser.add_argument('-r', '--restart', help='TODO: THIS HAS NOT BEEN IMPLMENENTED', action='store_true')
+
+        parser.set_defaults(func=self.close)
     
     def __setup_nuke(self, subparsers, parent_parser):
         parser = subparsers.add_parser('nuke', help='Close app process and clear out all the stored data for given that app', parents = [parent_parser])
-        parser.add_argument('application_name', type=str, help='TODO: Write help description')
+        parser.add_argument('application_name', type=str, help='Shortcut name of the Android application')
+
+        parser.set_defaults(func=self.nuke)
     
     def __setup_uninstall(self, subparsers, parent_parser):
-        parser = subparsers.add_parser('uninstall', help='TODO: Write help description', parents = [parent_parser])
-        parser.add_argument('application_name', type=str, help='TODO: Write help description')
+        parser = subparsers.add_parser('uninstall', help='Uninstalls the given known Android application', parents = [parent_parser])
+        parser.add_argument('application_name', type=str, help='Shortcut name of the Android application')
+
+        parser.set_defaults(func=self.uninstall)
+
+    def __setup_test(self, subparsers, parent_parser):
+        parser = subparsers.add_parser('test', help='Run all instrumented tests for the given application', parents = [parent_parser])
+        parser.add_argument('application_name', type=str, help='Shortcut name of the Android application')
+        parser.add_argument('--clazz', type=str, default=None, help='Filter tests to run to the given class')
+
+        parser.set_defaults(func=self.test)
 
     def __setup_tdd(self, subparsers, parent_parser):
         parser = subparsers.add_parser('tdd', help='TODO: Write help description', parents = [parent_parser])
@@ -158,140 +148,192 @@ class ArgParser:
         parser.add_argument('-d', '--debug', help='Launch the app in debug mode to attach a debugger', action='store_true')
         parser.add_argument('-l', '--loop', type=int, default=1, help='Specifies the number of loops the UTs will do. Default = 1')
 
+        parser.set_defaults(func=self.tdd)
+
     def __setup_rm_log(self, subparsers, parent_parser):
         parser = subparsers.add_parser('rm_log', help='Delete the CDP log for the given app', parents = [parent_parser])
-        parser.add_argument('application_name', type=str, help='TODO: Write help description')
+        parser.add_argument('application_name', type=str, help='Shortcut name of the Android application')
+
+        parser.set_defaults(func=self.rm_log)
 
     def __setup_pull_log(self, subparsers, parent_parser):
         parser = subparsers.add_parser('pull_log', help='Pull the CDP log for the given app', parents = [parent_parser])
-        parser.add_argument('application_name', type=str, help='TODO: Write help description')
-        parser.add_argument('-f', '--folder', help='Pull the entire CDP folder instead of just the log', action='store_true')
+        parser.add_argument('application_name', type=str, help='Shortcut name of the Android application')
+        parser.add_argument('-d', '--directory', help='Pull the entire CDP directory instead of just the log', action='store_true')
+
+        parser.set_defaults(func=self.pull_log)
 
     def __setup_os_version(self, subparsers, parent_parser):
         parser = subparsers.add_parser('os_version', help='Get the OS version of the Android device', parents = [parent_parser])
 
-    def __setup_ls(self, subparsers, parent_parser):
-        parser = subparsers.add_parser('ls', help='Specify the type of object to list', parents = [parent_parser])
-        parser.add_argument('ls_action', choices=('packages', 'apps', 'devices'))
+        parser.set_defaults(func=self.os_version)
+
+    def __setup_packages(self, subparsers, parent_parser):
+        parser = subparsers.add_parser('packages', help='Specify the type of object to list', parents = [parent_parser])
+
+        parser.set_defaults(func=self.packages)
+
+    def __setup_apps(self, subparsers, parent_parser):
+        parser = subparsers.add_parser('apps', help='Specify the type of object to list', parents = [parent_parser])
+
+        parser.set_defaults(func=self.apps)
+
+    def __setup_devices(self, subparsers):
+        parser = subparsers.add_parser('devices', help='Specify the type of object to list')
+
+        parser.set_defaults(func=self.devices)
 
     def __setup_restart(self, subparsers):
         parser = subparsers.add_parser('restart', help='Restart the ADB daemon')
 
-    def __setup_connect(self, subparsers):
-        parser = subparsers.add_parser('connect', help='TODO: Write help description')
-        parser.add_argument('--ip', type=str, help='TODO: Write help description', default=homeIp)
-        parser.add_argument('--port', type=str, help='TODO: Write help description. If you do not have a custom, enter the default of 5555', default=homePort)
+        parser.set_defaults(func=self.restart)
 
-    def __setup_input_text(self, subparsers):
-        parser = subparsers.add_parser('input_text', help='Print the given text to the devices curser')
+    def __setup_connect(self, subparsers):
+        parser = subparsers.add_parser('connect', help='Connect ADB to the given device over TCP')
+        parser.add_argument('--ip', type=str, help='IP address of the device', default=homeIp)
+        parser.add_argument('--port', type=str, help='Port adb is listening for on the device. If you do not have a custom, enter the default of 5555', default=homePort)
+
+        parser.set_defaults(func=self.connect)
+
+    def __setup_input_text(self, subparsers, parent_parser):
+        parser = subparsers.add_parser('input_text', help='Print the given text to the devices curser', parents = [parent_parser])
         parser.add_argument('text', type=str)
+
+        parser.set_defaults(func=self.input_text)
+
+    def __setup_bug_report(self, subparsers, parent_parser):
+        parser = subparsers.add_parser('bug_report', help='Prints dumpsys, dumpstate, and logcat data to the screen, for the purposes of bug reporting', parents = [parent_parser])
+        parser.add_argument('-f', '--file_name', type=str, default='android_dump.log')
+
+        parser.set_defaults(func=self.bug_report)
 
     # Action functions
     def install(self, args):
-        apk_path = APK_DIR.format(root=args.root_dir, dir_name=APP_DIR_NAME_KEYS[args.application_name], app_title=APP_TITLE_KEYS[args.application_name], arch=self.__get_arch(args), flavor=self.__get_flavour(args));
-        command = APP_CLOSE_INSTALL.format(connection_type=self.__get_connection_type(args), app_name=APP_NAME_KEYS[args.application_name], apk=apk_path)
+        # Get the path of the APK from the given app name
+        apk_dir = APK_DIR.format(root=args.root_dir, dir_name=APP_DIR_NAME_KEYS[args.application_name], arch=self.__get_arch(args), flavor=self.__get_flavour(args))
+
+        # We close the application since installing an APK while the app is running can have negative affects. TODO: test if this is needed
+        adb.close(APP_NAME_KEYS[args.application_name], device_indexes=args.select_device)
+        adb.install(apk_dir+"/"+self.__find_most_recent_apk(apk_dir), [ADB_INSTALL_REPLACE_EXISTING_APP_FLAG, ADB_INSTALL_ALLOW_DOWNGRADE_FLAG], device_indexes=args.select_device)
+
         if args.launch:
-            command += " && " + self.launch(args)
-        return command
+            self.launch(args)
 
     def install_apk(self, args):
-        command = APP_INSTALL.format(connection_type=self.__get_connection_type(args), apk=args.apk_path)
+        adb.install(args.apk_path, ['-d', '-r'], device_indexes=args.select_device)
         if args.launch:
-            command += " && " + self.launch(args)
-        return command
+            self.launch(args)
 
     def launch(self, args):
-        return APP_LAUNCH.format(connection_type=self.__get_connection_type(args), app_name=APP_NAME_KEYS[args.application_name], main_activity=APP_MAIN_ACTIVITY_KEYS[args.application_name], debug_flag='-D' if args.debug else '')
+        adb.launch(APP_NAME_KEYS[args.application_name], APP_MAIN_ACTIVITY_KEYS[args.application_name], [ADB_LAUNCH_STOP_FLAG, self.__get_debug_flag(args)], device_indexes=args.select_device)
 
     def close(self, args):
-        return APP_CLOSE.format(connection_type=self.__get_connection_type(args), app_name=APP_NAME_KEYS[args.application_name])
+        adb.close(APP_NAME_KEYS[args.application_name], device_indexes=args.select_device)
 
     def nuke(self, args):
-        return APP_NUKE.format(connection_type=self.__get_connection_type(args), app_name=APP_NAME_KEYS[args.application_name])
+        adb.clear(APP_NAME_KEYS[args.application_name], device_indexes=args.select_device)
 
     def uninstall(self, args):
-        return APP_CLOSE_UNINSTALL.format(connection_type=self.__get_connection_type(args), app_name=APP_NAME_KEYS[args.application_name])
+        adb.close(APP_NAME_KEYS[args.application_name], device_indexes=args.select_device)
+        adb.uninstall(APP_NAME_KEYS[args.application_name], device_indexes=args.select_device)
+
+    def test(self, args):
+        application_name = "{}.test".format(APP_NAME_KEYS[args.application_name])
+        # '-w' instructs ADB to wait until the instrumentation has completed before exiting.
+        # '-r' instructs ADB to use raw output for the test run. This is required by the instrumentation parser.
+        # '-e class' specifies that all tests in the specified class should be run. It's also possible to specify a method, in which case only that method in this class will be run.
+        # '-e package' specifies that all test cases in the given package should be run. This may be different from the previously provided test app package.
+        flags = ['-w', '-r']
+        if args.clazz is not None:
+            flags.append('-e class {}.{}'.format(APP_NAME_KEYS[args.application_name], args.clazz))
+
+        adb.run_tests(application_name, flags, device_indexes=args.select_device)
 
     def tdd(self, args):
-        return TDD_LAUNCH.format(connection_type=self.__get_connection_type(args), app_name=APP_NAME_KEYS["tdd"], main_activity=APP_MAIN_ACTIVITY_KEYS["tdd"], tests=args.tests, loop=args.loop, debug_flag='-D' if args.debug else '')
+        adb.launch(APP_MAIN_ACTIVITY_KEYS["tdd"], APP_MAIN_ACTIVITY_KEYS["tdd"], [ADB_LAUNCH_STOP_FLAG, self.__get_debug_flag(args), TDD_FLAGS.format(tests=args.tests, loop=args.loop)], device_indexes=args.select_device)
 
     def rm_log(self, args):
-        return RM_LOG.format(connection_type=self.__get_connection_type(args), app_name=APP_NAME_KEYS[args.application_name])
+        adb.rm(CDP_SRC_FILES_PATH.format(app_name=APP_NAME_KEYS[args.application_name])+'/'+CDP_SRC_LOG_NAME, device_indexes=args.select_device)
 
     def pull_log(self, args):
-        return PULL_LOG.format(connection_type=self.__get_connection_type(args), app_name=APP_NAME_KEYS[args.application_name])
+        src = CDP_SRC_FILES_PATH.format(app_name=APP_NAME_KEYS[args.application_name])
+        dest = CDP_DEST_FILES_NAME
+        if not args.directory:
+            src = src+'/'+CDP_SRC_LOG_NAME
+            dest = CDP_DEST_LOG_NAME
+
+        adb.pull(src, dest, device_indexes=args.select_device)
 
     def os_version(self, args):
-        return OS_VERSION.format(connection_type=self.__get_connection_type(args))
+        adb.os_version()
 
-    def ls(self, args):
-        if args.ls_action == "packages":
-            return LIST_PACKAGES.format(connection_type=self.__get_connection_type(args))
-        if args.ls_action == "apps":
-            return LIST_APPS.format(connection_type=self.__get_connection_type(args))
-        if args.ls_action == "devices":
-            return LIST_DEVICES.format(connection_type=self.__get_connection_type(args))
+    def packages(self, args):
+        adb.packages()
 
-        return "echo \"This should not be possible with the mutually exclusive group\""
+    def apps(self, args):
+        adb.apps()
+
+    def devices(self, args):
+        adb.devices()
 
     def restart(self, args):
-        return ADB_RESTART
+        adb.kill_server()
+        # The sleep is required as kill_server is a async operation, but returns
+        # before the operation has fully completed. We sleep to ensure the ADB 
+        # daemon is fully killed before starting it.
+        time.sleep(0.1)
+        adb.start_server()
 
     def connect(self, args):
-        return ADB_CONNECT.format(ip=args.ip, port=args.port)
+        adb.connect(args.ip, args.port)
+        adb.devices()
 
     def input_text(self, args):
-        return ADB_INPUT_TEXT.format(connection_type=self.__get_connection_type(args), text=args.text)
+        adb.input_text(args.text, device_indexes=args.select_device)
+
+    def bug_report(self, args):
+        adb.bugreport(device_indexes=args.select_device)
 
     def __init__(self):
         """Parse arguments"""
         parser = argparse.ArgumentParser(description='Some description')
-        parser.add_argument('-v', '--verbose', help='Display the ADB commands used', action='store_true')
-        subparsers = parser.add_subparsers(help='TODO: Write help description', dest='cmd_action')
+        parser.add_argument('-q', '--quiet', help='Do not display the ADB commands used', action='store_true')
+        subparsers = parser.add_subparsers()
 
-        parent_parser = argparse.ArgumentParser(add_help=False)
-        # parent_parser.add_argument('--vm', help='If the ADB connection should be attempted over a VM connection / IP connect', action='store_true')
+        target_device_parser = argparse.ArgumentParser(add_help=False)
 
-        # TODO: Handle the `notify` arg
-        connection_type_group = parent_parser.add_mutually_exclusive_group()
-        connection_type_group.add_argument('--vm', help='If the ADB connection should be attempted over a VM/IP connectionconnect', action='store_true')
-        connection_type_group.add_argument('--usb', help='If the ADB connection should be attempted over a usb connection', action='store_true')
+        connection_type_group = target_device_parser.add_mutually_exclusive_group()
+        connection_type_group.add_argument('-s','--select_device', action='append', type=int, default=None, help='Select the device to install the APK in the form of a list')
 
         # General app
-        self.__setup_install(subparsers, parent_parser)
-        self.__setup_install_apk(subparsers, parent_parser)
-        self.__setup_launch(subparsers, parent_parser)
-        self.__setup_close(subparsers, parent_parser)
-        self.__setup_nuke(subparsers, parent_parser)
-        self.__setup_uninstall(subparsers, parent_parser)
+        self.__setup_install(subparsers, target_device_parser)
+        self.__setup_install_apk(subparsers, target_device_parser)
+        self.__setup_launch(subparsers, target_device_parser)
+        self.__setup_close(subparsers, target_device_parser)
+        self.__setup_nuke(subparsers, target_device_parser)
+        self.__setup_uninstall(subparsers, target_device_parser)
+        self.__setup_test(subparsers, target_device_parser)
         # TDD specific
-        self.__setup_tdd(subparsers, parent_parser)
+        self.__setup_tdd(subparsers, target_device_parser)
         # Log interaction
-        self.__setup_rm_log(subparsers, parent_parser)
-        self.__setup_pull_log(subparsers, parent_parser)
+        self.__setup_rm_log(subparsers, target_device_parser)
+        self.__setup_pull_log(subparsers, target_device_parser)
         # Utility
-        self.__setup_os_version(subparsers, parent_parser)
-        self.__setup_ls(subparsers, parent_parser)
+        self.__setup_os_version(subparsers, target_device_parser)
+        self.__setup_packages(subparsers, target_device_parser)
+        self.__setup_apps(subparsers, target_device_parser)
+        self.__setup_devices(subparsers)
         self.__setup_restart(subparsers)
         self.__setup_connect(subparsers)
-        self.__setup_input_text(subparsers)
+        self.__setup_input_text(subparsers, target_device_parser)
+        self.__setup_bug_report(subparsers, target_device_parser)
 
         args = parser.parse_args()
 
-        # Feels like we are fighting with argparse by using adding parsers this way
-        if args.cmd_action is None:
-            print("No action given.", end=' ')
-            parser.print_help()
-            return
-
         try:
-            adb_command = getattr(self, args.cmd_action)(args)
-            if args.verbose:
-                print("Running: ", adb_command)
-            result = subprocess.call(adb_command, shell=True)
-            assert result == 0
+            args.func(args)
         except AttributeError:
-            print("Given action " + args.cmd_action + " was not found.")
+            print("Given action was not found.")
 
 
 def main():
