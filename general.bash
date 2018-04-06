@@ -102,6 +102,8 @@ alias rmsync="mkdir empty_dir; rsync -a --progress --delete empty_dir/ "
 
 display () { typeset -f "$1"; }
 
+remove_spaces () { for f in *\ *; do mv "$f" "${f// /_}"; done; }
+
 #### History ####
 
 # Pressing space after !<command> or !! will show the command to be executed

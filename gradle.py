@@ -7,7 +7,9 @@ BUILD_KEYS = {
     # Converged SDK
     "conv": "connecteddevices-sdk",
     # OneRomanApp
-    "one_rome": "oneRomanApp",
+    "ora": "oneRomanApp",
+    "ora_activities": "oneRomanApp-activities",
+    "ora_relay": "oneRomanApp-relay",
     # WNS Ping Test Application
     "wnsping": "wnspingtest",
     # CDP Host
@@ -20,7 +22,9 @@ CLEAN_KEYS = {
     # Converged SDK
     "conv": "sdk/converged/projections/android/build",
     # OneRomanApp
-    "one_rome": "samples/oneromanapp/android/app/build",
+    "ora": "samples/oneromanapp/android/app/projects/full/build",
+    "ora_activities": "samples/oneromanapp/android/app/projects/activities/build",
+    "ora_relay": "samples/oneromanapp/android/app/projects/relay/build",
     # WNS Ping Test Application
     "wnsping": "samples/wnspingtest/app/build",
     # CDP Host
@@ -101,7 +105,7 @@ class ArgParser:
     def build(self, args):
         if args.build_task == "sdk_test":
             return GRADLEW_TEST_COMMAND.format(root=args.root_dir, arch=self.__get_arch(args), type=self.__get_flavour(args))
-        if args.build_task == "one_rome_test":
+        if args.build_task == "ora_test":
             return GRADLEW_BUILD_ONE_ROMANAPP_TEST_COMMAND.format(root=args.root_dir, arch=self.__get_arch(args), type=self.__get_flavour(args))
         return GRADLEW_COMMAND.format(root=args.root_dir, task=BUILD_KEYS[args.build_task], type=self.__get_flavour(args), arch=self.__get_arch(args))
         

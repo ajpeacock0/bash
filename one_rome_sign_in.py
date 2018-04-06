@@ -4,7 +4,8 @@ from adb_android import adb_android as adb
 from one_rome_coordinates import oneplus as co
 from secrets import CDP_MSA as msaUsername
 from secrets import CDP_MSA_PASS as msaPassword
-
+from secrets import CDP_UI_MSA as testUsername
+from secrets import CDP_UI_MSA_PASS as testPassword
 
 ADB_KEY_EVENT_OK = "66"
 ADB_KEY_EVENT_BACK = "3"
@@ -95,6 +96,7 @@ def parse_args():
     # TODO: Handle the `notify` arg
     parser.add_argument(
         '-c', '--enter_creds', help='TODO: IMP - If the credentials should be entered. Use this on a fresh install / wiped cache', action='store_true')
+    parser.add_argument('--test', help='Use the UI test automation credentials', action='store_true')
 
     target_group = parser.add_mutually_exclusive_group()
     target_group.add_argument('-s','--select_device', action='append', type=int, default=None, help='Select the device to install the APK in the form of a list')
@@ -107,7 +109,10 @@ def main():
     args = parse_args()
 
     if args.enter_creds:
-        __enter_creds(msaUsername, msaPassword, device_indexes=args.select_device)
+        if args.test:
+            __enter_creds(testUsername, testPassword, device_indexes=args.select_device)
+        else:
+            __enter_creds(msaUsername, msaPassword, device_indexes=args.select_device)
     else:
         start_rome(args.select_device)
 

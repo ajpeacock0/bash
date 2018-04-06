@@ -7,21 +7,24 @@ from secrets import HOME_PORT as homePort
 from adb_android import adb_android as adb
 
 APP_NAME_KEYS = {
-    "one_rome": "com.microsoft.oneRomanApp",
-    "one_rome_test": "com.microsoft.oneRomanApp",
+    "ora": "com.microsoft.oneRomanApp",
+    "ora_test": "com.microsoft.oneRomanApp",
+    "mmx": "com.microsoft.mmx.agentapp",
     "tdd": "com.microsoft.tddrunner",
     "graph": "com.microsoft.office365.connectmicrosoftgraph"
 }
 
 APP_DIR_NAME_KEYS = {
-    "one_rome": "samples/oneromanapp/android/app/projects/full/build/outputs/apk",
-    "one_rome_test": "samples/oneromanapp/android/app/projects/full/build/outputs/apk/androidTest",
+    "ora": "samples/oneromanapp/android/app/projects/full/build/outputs/apk",
+    "ora_test": "samples/oneromanapp/android/app/projects/full/build/outputs/apk/androidTest",
+    "mmx": "com.microsoft.mmx.agentapp",
     "tdd": "test/tdd/runners/android/app/build/outputs/apk"
 }
 
 APP_MAIN_ACTIVITY_KEYS = {
-    "one_rome": "MainActivity",
+    "ora": "MainActivity",
     "tdd": "TddRunner",
+    "mmx": "MainActivity",
     "graph": "ConnectActivity"
 }
 
@@ -73,6 +76,7 @@ class ArgParser:
             return ADB_LAUNCH_DEBUG_FLAG
         return ''
 
+    # There is something wrong with this. I had the issue where if I changed branches from task/xxx to task/xxx_p2 then new builds weren't being used
     def __find_most_recent_apk(self, searchDir):
         # Return the newest file under the given directory with the APK extension
         os.chdir(searchDir)

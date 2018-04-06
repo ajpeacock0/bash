@@ -2,29 +2,6 @@
 
 set_android_arrays()
 {
-    declare -g -A install_keys=(
-        # OneRomanApp
-        [one_rome]=$ONE_ROME_APK
-        # [one_rome_release]=$TODO
-        [one_rome_x86]=$ROME_IN_APK_X86
-        # [one_rome_x86_release]=$TODO
-        # Xamarin RomanApp
-        [xam]=$XAMARIN_APP_APK
-        [xam_release]=$XAMARIN_APP_RELEASE_APK
-        # [xam_x86]=$TODO
-        # [xam_x86_release]=$TODO
-        # CDPHost
-        [cdphost]=$CDP_HOST_APK
-        # [cdphost_release]=$TODO
-        [cdphost_x86]=$CDP_HOST_APK_X86
-        # [cdphost_x86_release]=$TODO
-        # TDD Runner
-        [tdd]=$TDD_RUNNER_APK
-        # [tdd_release]=$TODO
-        [tdd_x86]=$TDD_RUNNER_APK_X86
-        # [tdd_x86_release]=$TODO
-    )
-
     declare -g -A xam_keys=(
         [dll]="/t:Rebuild /p:Configuration=Debug $XAM_DLL_CSPROJ"
         [dll_release]="/t:Rebuild /p:Configuration=Release $XAM_DLL_CSPROJ"
@@ -92,7 +69,7 @@ build_jni() { python $MY_HOME_WIN\\javah.py javah --root_dir="$CURR_CDP_WIN" $@ 
 build_in() { clean $1 && build $1 && ac install $1 $@ 2>&1; }
 
 # one_rome_test. If there are any changes to the app itself, you need to generate the APK seperatley. This is because a new ORA APK is not generated with `build one_rome_test`
-build_test() { build one_rome && build one_rome_test && ac install one_rome $@ && ac install one_rome_test $@ 2>&1; }
+build_test() { build ora && build ora_test && ac install ora $@ && ac install ora_test $@ 2>&1; }
 
 #### Python script aliases ####
 
@@ -158,14 +135,14 @@ _store_apk() { _dmkdir_apk && cp "$1" "$DDIR" && cd "$DDIR" && exp; }
 #### Storing/Cleaning Files - Public Functions ####
 
 # $1: Name of VM/PC which has a shared directory containing CDPTraces.log
-store_log () { _copy_log $1 && _dmkdir_log && _mvlog "CDPTraces_PC" && cd "$DDIR" && exp; }
+# store_log () { _copy_log $1 && _dmkdir_log && _mvlog "CDPTraces_PC" && cd "$DDIR" && exp; }
 
 # Pull the log to the given application and given desktop directory log to a timestamp directory e.g. store_coa $CDP1_VM
 # $1: Name of application to pull from
 # $2: [Optional] Name of VM/PC which has a shared directory containing CDPTraces.log
-store () { pull_log $1 && _dmkdir_log && _mvlog "CDPTraces_android" && cd "$DDIR" && exp && if [ $# -eq 2 ]; then $(_copy_log $2); fi; }
+# store () { pull_log $1 && _dmkdir_log && _mvlog "CDPTraces_android" && cd "$DDIR" && exp && if [ $# -eq 2 ]; then $(_copy_log $2); fi; }
 
-store_apk() { _choose_adb_device $2 && _execute _store_apk install_keys $1; }
+# store_apk() { _choose_adb_device $2 && _execute _store_apk install_keys $1; }
 
 #### Building Android - Private Functions ####
 

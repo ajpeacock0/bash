@@ -12,9 +12,7 @@ declare -A nav_keys=(
   [drop]=$ROME_DROP
   [vms]=$VM_DIR
   # Git repos
-  [xam_proj]=$XAMARIN_PROJ
-  [xam_app]=$XAMARIN_APP_DIR
-  [coa]=$COA
+  [repos]=$GIT_REPOS
   [rome_app]=$ROME_APP
   [cdp1]=$CDP_1
   [cdp2]=$CDP_2
@@ -58,7 +56,8 @@ declare -A script_keys=(
   [specific]="$MY_HOME_WIN/specific.bash"
   [sign_in]="$MY_HOME_WIN/one_rome_sign_in.py"
   [gradle]="$MY_HOME_WIN/gradle.py"
-  [adb]="$MY_HOME_WIN/adb_commands.py"
+  [adb]="$MY_HOME_WIN/adb_android/adb_android/adb_android.py"
+  [adb_commands]="$MY_HOME_WIN/adb_commands.py"
 )
 
 #### Navigation ALIASES ####
@@ -121,11 +120,27 @@ alias err="//tkfiltoolbox/tools/839/1.7.2/x86/err "
 alias xamarin_sample="cygstart $XAMARIN_APP_DIR/ConnectedDevices.Xamarin.Droid.Sample.sln"
 alias xamarin_sdk="cygstart $XAMARIN_PROJ/ConnectedDevices.sln"
 
+alias updot="python $GIT_REPOS_WIN/updot/updot.py"
+
 # Windows style newline characters can cause issues in Cygwin in certain files.
 # Replacement for the command with the same. Removes trailing \r character
 # that causes the error `'\r': command not found`
 dos2unix () { sed -i 's/\r$//' $1; }
 
+export PYTHONIOENCODING="utf-8"
+function fuck () {
+    TF_PYTHONIOENCODING=$PYTHONIOENCODING;
+    export TF_ALIAS=fuck;
+    export TF_SHELL_ALIASES=$(alias);
+    export TF_HISTORY=$(fc -ln -10);
+    export PYTHONIOENCODING=utf-8;
+    TF_CMD=$(
+        thefuck THEFUCK_ARGUMENT_PLACEHOLDER $@
+    ) && eval $(sed 's/\r$//' <<< $TF_CMD); # Remove the Windows EOL char[s]
+    unset TF_HISTORY;
+    export PYTHONIOENCODING=$TF_PYTHONIOENCODING;
+    history -s $TF_CMD;
+}
 
 #### CDP Traces ####
 
