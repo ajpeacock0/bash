@@ -73,10 +73,6 @@ build_test() { build ora && build ora_test && ac install ora $@ && ac install or
 
 #### Python script aliases ####
 
-_set_adb_device () { ADB_DEVICE=$1; }
-
-_choose_adb_device () { _execute_opt _set_adb_device adb_device_keys $1; }
-
 #### Android Viewing + Interaction - Private Functions ####
 
 _adb_run ()
@@ -91,25 +87,8 @@ _adb_run ()
     fi
 }
 
-_adb_root () { _adb_run root; }
-
-_adb_shell () { _adb_run shell "$@"; }
-
-_adb_swipe () { _adb_shell input swipe 200 900 200 100 100; }
-
-_adb_power () { _adb_shell input keyevent 26; }
-
-#### Android Viewing + Interaction - Public Functions ####
-
-adb_on () { _choose_adb_device $1 && _adb_power && _adb_swipe; }
-
-adb_off () { _choose_adb_device $1 && _adb_power; }
-
-adb_restart () { python $MY_HOME_WIN\\adb_commands.py restart $@ 2>&1; } 
-
-# adb_connect () { adb_restart; adb connect "$HOME_IP:$HOME_PORT" && adb devices; }
-
-adb_disconnect () { adb disconnect "$HOME_IP:$HOME_PORT" && adb devices; }
+# View logcat though a better view - https://github.com/JakeWharton/pidcat
+logcat () { python "$D_WIN\git_repos\pidcat\pidcat.py" $@; }
 
 #### Storing Files - Private Functions ####
 
@@ -142,20 +121,12 @@ _store_apk() { _dmkdir_apk && cp "$1" "$DDIR" && cd "$DDIR" && exp; }
 # $2: [Optional] Name of VM/PC which has a shared directory containing CDPTraces.log
 # store () { pull_log $1 && _dmkdir_log && _mvlog "CDPTraces_android" && cd "$DDIR" && exp && if [ $# -eq 2 ]; then $(_copy_log $2); fi; }
 
-# store_apk() { _choose_adb_device $2 && _execute _store_apk install_keys $1; }
-
 #### Building Android - Private Functions ####
 
 _javap () { javap -classpath $CLASSES_JAR "com.microsoft.connecteddevices.$1"; }
 
+_align_apk() { "$ZIP_ALIGN" 4 $1 $2; }
+
 #### Building Android - Public Functions ####
 
 build_in() { build $1 && adb_in $@; }
-
-#### TDD commands ####
-
-tdd_files () { _choose_adb_device $1 && _adb_shell ls /data/user/0/$TDDRUNNER_NAME/files/trx; }
-
-tdd_pull () { _choose_adb_device $1 && _adb_root; _adb_run pull /data/user/0/$TDDRUNNER_NAME/files/trx && _adb_run pull /data/user/0/$TDDRUNNER_NAME/files/logcat_dump; }
-
-tdd_in_run() { adb_in tdd && tdd_run $1 ${@:2}; }
