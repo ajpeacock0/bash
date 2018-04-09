@@ -100,6 +100,7 @@ alias space="df -h"
 # Improved rm for larger files TODO: clean up the need to create this enpty_dir/
 alias rmsync="mkdir empty_dir; rsync -a --progress --delete empty_dir/ "
 
+# Prints the contents of a function
 display () { typeset -f "$1"; }
 
 remove_spaces () { for f in *\ *; do mv "$f" "${f// /_}"; done; }

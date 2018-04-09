@@ -10,6 +10,8 @@ source "${HOME}/git.bash"
 
 source "${HOME}/android.bash"
 
+source "${HOME}/navigation.bash"
+
 if [ -f "${HOME}/specific.bash" ]; then
   source "${HOME}/specific.bash"
 fi
