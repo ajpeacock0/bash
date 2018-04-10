@@ -1,0 +1,3 @@
+[submodule "adb_python_wrapper"]
+	path = adb_python_wrapper
+	url = https://github.com/ajpeacock0/adb_python_wrapper
