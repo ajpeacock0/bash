@@ -14,7 +14,14 @@ alias log="git log --name-status"
 alias fe="git fetch -v"
 
 # Shortcut + enable Perl regex grep
-alias gg="git grep -P "
+alias gg="git grep --perl-regexp --line-number "
+
+alias gg-w="git grep --perl-regexp --line-number --word-regexp "
+
+gg_uniq () { git grep -P $1 | awk -F: '{print $1}' | uniq; }
+
+# Shortcut. gl = Git List
+alias gl="git ls-files"
 
 # Shortcut for stash
 alias gpush="git stash"
@@ -68,10 +75,24 @@ alias updatesub="git submodule update --recursive --init"
 alias gmv="git mv -f "
 
 # Delete all non-commited files (- etags file) TODO: follow up with a `cp_secrets`
-alias gnuke="git clean -fdx -e ".tags" -e \".tags_sorted_by_file\""
+gnuke () 
+{ 
+    echo "Comfirm deletion of the following files? (Remember all non-added files will be removed)"
+    git clean -fdxn &&
+    while true; do
+        read -s -n 1 C
+        case $C in
+            [y]* ) git clean -fdx -e ".tags" -e \".tags_sorted_by_file\"; break;;
+            [n]* ) break;;
+            * ) echo "Please answer y or n.";;
+        esac
+    done
+}
+
 
 # Push to origin HEAD with force
-alias submit="git push origin +HEAD"
+# TODO: Make this rebor, check to see if you still want to push afterwards
+submit () { git push origin +HEAD; }
 
 #### Commitments ####
 
@@ -93,7 +114,7 @@ alias reset="git reset HEAD~"
 # Discard all non-commited changes
 alias discard="git stash save --keep-index && git stash drop"
 
-# Reset back to the state before the last executed command. Use as an "undo" command
+# Reset back to the state before the last executed git command. Use as an "undo" command
 alias gundo="git reset HEAD@{1}"
 
 # Undo last commit by reseting and discard the changes
@@ -107,6 +128,9 @@ alias track_changes="git update-index --no-assume-unchanged"
 
 # View files marked with --assume-unchanged
 alias ignored_files="git ls-files -v | grep '^[[:lower:]]'"
+
+# See files checked into git
+alias cf="git ls-files -v"
 
 #### Conflicts ####
 
@@ -154,6 +178,12 @@ rebbr() { git fetch origin && git rebase origin/$(currbr) --stat; }
 # Fetches origin and rebases ontop on master
 rebor() { git fetch origin && git rebase origin/master --stat; }
 
+# This will now checkout to the middle commit between now and the last known good commit. If the build succeeds, use `git bisect good`. If it fails, use ``git bisect bad`
+bisect() { git bisect start && git bisect bad && git bisect good $1; }
+
+# Note: Reset, rebase and merge all save your original HEAD pointer to ORIG_HEAD. Thus these commands have been run since the rebase you're trying to undo then you'll have to use the reflog.
+undo_rebase() { git reset --hard ORIG_HEAD; }
+
 # Fetches origin and rebases ontop on master and switches to origin/master
 rebmaster() { git fetch origin && git rebase origin/master --stat && git checkout origin/master; }
 
@@ -196,8 +226,16 @@ rm_od ()
 
 alias reorder="git rebase -i HEAD~5"
 
+clear_merged_br () { git branch --merged | egrep -v "(^\*|master|dev)" | xargs git branch -d; }
+
 # View what commits have not been checked into master
 cl_br() { git log master.."$1"; }
+
+# Tag the branch then delete it, effectively keeping the branch around without it cluttering your list
+archive_br () { git tag archive/$1 $1 && git branch -D $1; }
+
+# Restore the archived branch
+restore_br () { git checkout -b $1 archive/$1; }
 
 #### Given File Change ####
 
@@ -230,6 +268,9 @@ alias reflog="git reflog --date=iso"
 # view the file changed list in the given commit ID
 alias cinfo="git diff-tree --no-commit-id --name-status -r "
 
+# View a list of all deleted files
+alias gdeleted="git log --diff-filter=D --summary | grep delete"
+
 # List all existing files being tracked by the current branch
 tracked() { git ls-tree -r $(currbr) --name-only; }
 
@@ -242,5 +283,31 @@ cdiff () { git diff $1^ $1; }
 # view all files given author has touched
 gtouch () { git log --no-merges --stat --author="$1" --name-only --pretty=format:"" | sort -u; }
 
+# View all the commits I have merged
+my_commits () { git log --author="anpea"; } 
+
 # Perform a "git grep" including the history of the files
 greph () { git rev-list --all | xargs git grep "$1"; }
+
+get_unstaged_files() { git diff --name-only; }
+
+get_staged_files() { git diff --staged --name-only --diff-filter=ACMRT; }
+
+untrack() { git rm -r --cached $1; } 
+
+rm_untracked () 
+{ 
+    echo "Comfirm deletion of the following files? (Remember all non-added files will be removed)"
+    git clean -n &&
+    while true; do
+        read -s -n 1 C
+        case $C in
+            [y]* ) git clean -f; break;;
+            [n]* ) break;;
+            * ) echo "Please answer y or n.";;
+        esac
+    done
+}
+
+# Adds the worktree with the given directory name. Run this in the main repo
+add_worktree() { git worktree prune && git worktree add ../$1 master; }

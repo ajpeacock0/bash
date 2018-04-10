@@ -26,6 +26,42 @@ _execute()
     fi
 }
 
+_execute_notify()
+{
+    START_TIME=$(date +"%r")
+    local -n keys=$2
+
+    if [ $# -eq 3 ] && [ ${keys[$3]+exists} ]
+    then
+        "$1" "${keys[$3]}"; echo "Sending Notification"; _send_notification "Execution complete" "${keys[$3]}\nTime: $START_TIME -$(date +"%r")" && return 0
+    else 
+        # TODO: only display keys prefixed with given string
+        _print_array keys && return 1
+    fi
+}
+
+_execute_opt()
+{
+    local -n keys=$2
+
+    if [ $# -eq 3 ] && [ ${keys[$3]+exists} ]
+    then
+        "$1" "${keys[$3]}"
+    fi
+    return 0
+}
+
+_execute_func()
+{
+    local -n funcs=$1
+
+    if [ $# -eq 2 ] && [ ${funcs[$2]+exists} ]
+    then
+        "${funcs[$2]}"
+    fi
+    return 0
+}
+
 #### Utility ####
 
 # Improved ls
@@ -64,14 +100,19 @@ alias space="df -h"
 # Improved rm for larger files TODO: clean up the need to create this enpty_dir/
 alias rmsync="mkdir empty_dir; rsync -a --progress --delete empty_dir/ "
 
+# Prints the contents of a function
+display () { typeset -f "$1"; }
+
+remove_spaces () { for f in *\ *; do mv "$f" "${f// /_}"; done; }
+
 #### History ####
 
 # Pressing space after !<command> or !! will show the command to be executed
 bind Space:magic-space
 
 # Increase HISTSIZE from 1000 to 10000
-HISTSIZE=10000
-HISTFILESIZE=11000
+HISTSIZE=100000
+HISTFILESIZE=110000
 # Save timestamp in the history file
 HISTTIMEFORMAT="%F %T "
 # Don't store duplicates + ifnore commands starting with space

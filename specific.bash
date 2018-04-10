@@ -1,102 +1,50 @@
-declare -A nav_keys=(
-  # Build files
-  [xam_apk]=$XAMARIN_APK
-  [xam_dll]=$XAMARIN_DLL
-  [sdk_aar]=$SDK_3P_AAR
-  [rome_apk]=$ROME_IN_APK_DIR
-  # System logs
-  [cdpsvc]=$SYS_CDP
-  [cdpusersvc]=$USER_CDP
-  # Network
-  [network_dir]=$MY_NETWORK_DIR
-  [drop]=$ROME_DROP
-  [vms]=$VM_DIR
-  # Git repos
-  [xam_proj]=$XAMARIN_PROJ
-  [xam_app]=$XAMARIN_APP_DIR
-  [coa]=$COA
-  [rome_app]=$ROME_APP
-  [cdp1]=$CDP_1
-  [cdp2]=$CDP_2
-  [cdpmaster]=$CDP_MASTER
-  [github]=$PROJECT_ROME_GITHUB
-  [pingpong]=$CDP_PINGPONG
-  # notes
-  [work]=$WORK
-  [home]=$MY_HOME
-  # Enlistment
-  [en]=$MY_ENLISTMENT
-  [en_cdp]=$ENLISTMENT_CDP
-  [en_appservice]=$ENLISTMENT_APP_CONTRACT
-  # Miscellaneous
-  [scripts]=$SCRIPTS
-  [wsl]=$WSL_HOME
-  [secrets]=$SECRET_HOME
-)
-
-declare -A script_keys=(
-  # Bash
-  [inputrc]="$MY_HOME_WIN/.inputrc_custom"
-  [android]="$MY_HOME_WIN/android.bash"
-  [general]="$MY_HOME_WIN/general.bash"
-  [git]="$MY_HOME_WIN/git.bash"
-  [main]="$MY_HOME_WIN/main.bash"
-  [vars]="$MY_HOME_WIN/variables.bash"
-  [specific]="$MY_HOME_WIN/specific.bash"
-)
-
-#### Navigation ALIASES ####
-
-_navigate() { _execute $1 nav_keys $2; }
-
-# Open a explorer window at the path name - op = OPen
-op() { _navigate cygstart $1; }
-
-# Change directory to path name - gt = GO to
-go() { _navigate cd $1; }
-
-# Check Script
-cs() { _execute "$SUBL_FUNC" script_keys $1; }
-
 #### PROGRAM ALIASES ####
 
-alias adb="$ADB"
-msbuild () { "$MSBUILD" $@; }
+adb () { "$ADB" $@; }
 alias subl="$SUBL_ALIAS"
-nuget () { "$NUGET" $@; }
-javac () { "$JAVAC" $@; }
-javap () { "$JAVAP" $@; }
-javah () { "$JAVAH" $@; }
-# Didn't work with multiple arguments
-# keytool () { "$KEYTOOL" $@; }
-alias keytool="$C/Program\ Files/Java/jdk1.8.0_121/jre/bin/keytool.exe"
-alias jarsigner="$C/Program\ Files/Java/jdk1.8.0_121/bin/jarsigner.exe"
-apksigner () { "$APK_SIGNER" $@; }
-zipalign () { "$ZIP_ALIGN" $@; }
-alias scons="$C/Python27/scons-2.4.1.bat "
 alias cmake="$CMAKE"
 
+# Alias to internal Windows error code lookup
 alias err="//tkfiltoolbox/tools/839/1.7.2/x86/err "
-alias xamarin_sample="cygstart $XAMARIN_APP_DIR/ConnectedDevices.Xamarin.Droid.Sample.sln"
-alias xamarin_sdk="cygstart $XAMARIN_PROJ/ConnectedDevices.sln"
+
+alias updot="python $GIT_REPOS_WIN/updot/updot.py"
 
 # Windows style newline characters can cause issues in Cygwin in certain files.
 # Replacement for the command with the same. Removes trailing \r character
 # that causes the error `'\r': command not found`
 dos2unix () { sed -i 's/\r$//' $1; }
 
+export PYTHONIOENCODING="utf-8"
+function fuck () {
+    TF_PYTHONIOENCODING=$PYTHONIOENCODING;
+    export TF_ALIAS=fuck;
+    export TF_SHELL_ALIASES=$(alias);
+    export TF_HISTORY=$(fc -ln -10);
+    export PYTHONIOENCODING=utf-8;
+    TF_CMD=$(
+        thefuck THEFUCK_ARGUMENT_PLACEHOLDER $@
+    ) && eval $(sed 's/\r$//' <<< $TF_CMD); # Remove the Windows EOL char[s]
+    unset TF_HISTORY;
+    export PYTHONIOENCODING=$TF_PYTHONIOENCODING;
+    history -s $TF_CMD;
+}
+
 #### CDP Traces ####
 
 qsvc() { sc queryex cdpsvc; }
 
 # Note: Requires Admin
-stopsvc() { sc stop cdpsvc; }
-startsvc() { sc start cdpsvc; }
-disablesvc() { sc config cdpsvc start=disabled; }
-enablesvc() { sc config cdpsvc start=demand; }
+stop_svc() { sc stop cdpsvc; }
+start_svc() { sc start cdpsvc; }
+disable_svc() { sc config cdpsvc start=disabled; }
+enable_svc() { sc config cdpsvc start=demand; }
 
-alias rm_sys_log="stopsvc && rm $SYS_CDP_WIN\\\\CDPTraces.log && startsvc"
-alias rm_user_log="rm $USER_CDP_WIN\\\\CDPTraces.log"
+rm_sys_log () { stop_svc; rm $SYS_CDP_WIN\\\\CDPTraces.log && startsvc; };
+rm_user_log () { rm $USER_CDP_WIN\\\\CDPTraces.log; };
 
-alias sys_log="$SUBL_ALIAS $SYS_CDP_WIN\\\\CDPTraces.log"
-alias user_log="$SUBL_ALIAS $USER_CDP_WIN\\\\CDPTraces.log"
+sys_log () { $SUBL_ALIAS $SYS_CDP_WIN\\\\CDPTraces.log; };
+user_log () { $SUBL_ALIAS $USER_CDP_WIN\\\\CDPTraces.log; };
+
+set_cdp1() { CURR_CDP="$CDP_1" && CURR_CDP_WIN="$CDP_1_WIN" && set_variables; }
+set_cdp2() { CURR_CDP="$CDP_2" && CURR_CDP_WIN="$CDP_2_WIN" && set_variables; }
+set_cdp3() { CURR_CDP="$CDP_3" && CURR_CDP_WIN="$CDP_3_WIN" && set_variables; }
