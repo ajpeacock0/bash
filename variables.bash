@@ -11,7 +11,6 @@ F="$SHELL_DRIVE/f"; export F
 X="$SHELL_DRIVE/x"; export X
 Z="//anpea-dev/c$"; export Z
 
-
 # CDP directories
 GIT_REPOS="$D/git_repos"
 CDP_1="$GIT_REPOS/cdp"
@@ -57,8 +56,6 @@ PIP="$C/Python36/Scripts/pip3.6.exe"
 SUBL_ALIAS="$C/Program\ Files/Sublime\ Text\ 3/subl.exe"
 SUBL_FUNC="$C/Program Files/Sublime Text 3/subl.exe"
 
-
-
 # Git Repo locations of importanace
 COA="$GIT_REPOS/CortanaAndroid"
 PROJECT_ROME_GITHUB="$GIT_REPOS/project-rome"
@@ -66,6 +63,7 @@ CDP_PINGPONG="$GIT_REPOS/CDPPingPong"
 MS_OS="$F/os/src"
 CDP2OS="$GIT_REPOS/cdp2os"
 MMX="$GIT_REPOS/Shell.MMX/android/components/AgentsAPI"
+BASH="$GIT_REPOS/bash"
 
 ######### DEPENDENT ON WHAT DIR YOU'RE IN ########
 

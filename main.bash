@@ -1,21 +1,27 @@
-source "${HOME}/variables.bash"
-
-if [ -f "${HOME}/secrets.bash" ]; then
-  source "${HOME}/secrets.bash"
+if [ -f "${SOURCES}/variables.bash" ]; then
+  source "${SOURCES}/variables.bash"
 fi
 
-source "${HOME}/general.bash"
-
-source "${HOME}/git.bash"
-
-source "${HOME}/android.bash"
-
-source "${HOME}/navigation.bash"
-
-if [ -f "${HOME}/specific.bash" ]; then
-  source "${HOME}/specific.bash"
+if [ -f "${SOURCES}/secrets.bash" ]; then
+  source "${SOURCES}/secrets.bash"
 fi
 
-if [ -f "${HOME}/scripts.bash" ]; then
-  source "${HOME}/scripts.bash"
+if [ -f "${SOURCES}/general.bash" ]; then
+  source "${SOURCES}/general.bash"
+fi
+
+if [ -f "${SOURCES}/git.bash" ]; then
+  source "${SOURCES}/git.bash"
+fi
+
+if [ -f "${SOURCES}/android.bash" ]; then
+  source "${SOURCES}/android.bash"
+fi
+
+if [ -f "${SOURCES}/navigation.bash" ]; then
+  source "${SOURCES}/navigation.bash"
+fi
+
+if [ -f "${SOURCES}/specific.bash" ]; then
+  source "${SOURCES}/specific.bash"
 fi

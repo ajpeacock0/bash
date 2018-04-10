@@ -25,6 +25,7 @@ declare -A nav_keys=(
   [os]=$MS_OS
   [cdp2os]=$CDP2OS
   [mmx]=$MMX
+  [bash]=$BASH
   # notes
   [notes]=$NOTES
   [work]=$WORK

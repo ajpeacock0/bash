@@ -1,6 +1,11 @@
 [[ "$-" != *i* ]] && return
 
+SOURCES="/cygdrive/d/git_repos/bash"
+
 # Aliases
-if [ -f "${HOME}/main.bash" ]; then
-  source "${HOME}/main.bash"
+# TODO: make these absolute paths
+if [ -f "$SOURCES/main.bash" ]; then
+  source "$SOURCES/main.bash"
+else
+	echo "Failed to find the main.bash file in [$SOURCES] :("
 fi
