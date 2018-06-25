@@ -5,18 +5,18 @@
 # Disks
 SHELL_DRIVE="/cygdrive"
 C="$SHELL_DRIVE/c"; export C
-D="$SHELL_DRIVE/d"; export D
+E="$SHELL_DRIVE/e"; export E
 L="$SHELL_DRIVE/l"; export L
 F="$SHELL_DRIVE/f"; export F
 X="$SHELL_DRIVE/x"; export X
 Z="//anpea-dev/c$"; export Z
 
 # CDP directories
-GIT_REPOS="$D/git_repos"
-CDP_1="$GIT_REPOS/cdp"
-CDP_2="$GIT_REPOS/cdp_2"
-CDP_3="$GIT_REPOS/cdp_3"
-CDP_MASTER="$GIT_REPOS/cdp_master"
+STORAGE="$E"
+GIT_REPOS="$STORAGE/git_repos"
+CDP_1="$GIT_REPOS/cdp1"
+CDP_2="$GIT_REPOS/cdp2"
+CDP_3="$GIT_REPOS/cdp3"
 
 # Windows user name
 LOCAL_WIN_USER="anpea"
@@ -27,19 +27,20 @@ GLOBAL_USER="anpea"
 
 # Paths in Windows format due to certain input requirements
 C_WIN="C:"
-D_WIN="D:"
+E_WIN="E:"
 
-GIT_REPOS_WIN="$D_WIN/git_repos"
-CDP_1_WIN="$GIT_REPOS_WIN/cdp"
-CDP_2_WIN="$GIT_REPOS_WIN/cdp_2"
-CDP_3_WIN="$GIT_REPOS_WIN/cdp_3"
-WORK_WIN="$D_WIN/work_files"
+GIT_REPOS_WIN="$E_WIN/git_repos"
+CDP_1_WIN="$GIT_REPOS_WIN/cdp1"
+CDP_2_WIN="$GIT_REPOS_WIN/cdp2"
+CDP_3_WIN="$GIT_REPOS_WIN/cdp3"
+WORK_WIN="$E_WIN/work_files"
+BASH_REPO="$GIT_REPOS_WIN\bash"
 MY_HOME_WIN="$C_WIN\cygwin64\home\\$LOCAL_WIN_USER"
 USER_DIR="$C/Users/$LOCAL_WIN_USER"
 
 # Application directories
 # Do not set this to "$C/tools/adt-bundle-windows-x86_64-20140702/sdk"
-ANDROID_SDK="$C/Program Files (x86)/Android/android-sdk"
+ANDROID_SDK="$E/android-sdk"
 ADB="$ANDROID_SDK/platform-tools/adb"
 MONITOR="$ANDROID_SDK/tools/lib/monitor-x86_64/monitor.exe"
 XDE="$C/Program Files (x86)/Microsoft XDE/10.0.10586.0/XDE.exe"
@@ -50,8 +51,6 @@ DEXDUMP="$ANDROID_SDK_BUILD_TOOLS/dexdump.exe"
 VS_HOME="$C/Program\ Files\ \(x86\)/Microsoft\ Visual\ Studio\ 14.0/Common7"
 CMAKE_HOME="$USER_DIR/AppData/Local/Android/sdk/cmake/3.6.4111459"
 TAEF="$C/testexecution/TE.exe"
-PYTHON="$C/Python36/python.exe"
-PIP="$C/Python36/Scripts/pip3.6.exe"
 # Due to the spaces in the path and the difference between aliases and functions, two seperate variables are required
 SUBL_ALIAS="$C/Program\ Files/Sublime\ Text\ 3/subl.exe"
 SUBL_FUNC="$C/Program Files/Sublime Text 3/subl.exe"
@@ -99,7 +98,7 @@ CURRENT_ROME_DROP="$ROME_DROP/Rome_1705"
 # Note files directories
 # Machine specific paths
 NOTES="$C/notes"
-WORK="$D/work_files"
+WORK="$STORAGE/work_files"
 MY_HOME="$C/cygwin64/home/$LOCAL_BASH_USER"
 
 
@@ -110,14 +109,12 @@ MY_ENLISTMENT="$F/enlistments"
 ENLISTMENT_CDP="$MY_ENLISTMENT/onecoreuap/windows/cdp"
 ENLISTMENT_APP_CONTRACT="$MY_ENLISTMENT/onecoreuap/base/appmodel/AppContracts"
 
-MY_JAVA_HOME="$C/Program Files/Java/jdk1.8.0_121"
-
 # Application directories
-JAVA="$MY_JAVA_HOME/bin/java.exe"
-JAVAC="$MY_JAVA_HOME/bin/javac.exe"
-JAVAP="$MY_JAVA_HOME/bin/javap.exe"
-JAVAH="$MY_JAVA_HOME/bin/javah.exe"
-KEYTOOL="$MY_JAVA_HOME/jre/bin/keytool.exe"
+JAVA="$JAVA_HOME/bin/java.exe"
+JAVAC="$JAVA_HOME/bin/javac.exe"
+JAVAP="$JAVA_HOME/bin/javap.exe"
+JAVAH="$JAVA_HOME/bin/javah.exe"
+KEYTOOL="$JAVA_HOME/jre/bin/keytool.exe"
 VS="$VS_HOME/IDE/devenv.exe"
 NUGET="$C/tools/NuGet/nuget.exe"
 CMAKE="$CMAKE_HOME/bin/cmake.exe"
@@ -146,7 +143,8 @@ set_android_app_variables()
 
 set_variables()
 {
-    set_var SCRIPTS "$CURR_CDP/tools/scripts";
+    set_var SCRIPTS_WIN $CURR_CDP_WIN'/tools/scripts';
+    set_var ANDROID_SCRIPTS_WIN $SCRIPTS_WIN'/Test/android';
     set_var CDP_UT_X64_DEBUG $CURR_CDP_WIN'\\_build\\onecore\\x64\\debug\\bin\\tests\\cdp_ut.dll';
     set_var CDP_UT_X64_RELEASE $CURR_CDP_WIN'\\_build\\onecore\\x64\\release\\bin\\tests\\cdp_ut.dll';
 
@@ -224,26 +222,6 @@ set_variables()
     set_var GRADLEW "$CURR_CDP/gradlew";
 
     set_var MAVEN_MINOR_VERSION $(cat "$CURR_CDP/gradle.properties" | grep mavenMinorVersion | sed -e 's/.*= //');
-    set_var AAR_SRC_ARR "$SDK_3P_AAR/connecteddevices-sdk-$ARCH_ARM-0.$MAVEN_MINOR_VERSION.0-release.aar";
-    set_var AAR_DEST_ARR "$XAMARIN_PROJ_DIR/ConnectedDevices.Xamarin.Droid/Jars/connecteddevices-sdk-armv7-release.aar";
-
-    # CDP csproj build paths
-    set_var XAM_DLL_CSPROJ "$XAMARIN_PROJ_WIN_DIR/ConnectedDevices.Xamarin.Droid/ConnectedDevices.Xamarin.Droid.csproj";
-    set_var XAM_APP_CSPROJ "$XAMARIN_APP_WIN_DIR/ConnectedDevices.Xamarin.Droid.Sample/ConnectedDevices.Xamarin.Droid.Sample.csproj";
-
-    # JNI building
-    # set_var ANDROID_PROJECTIONS "$CURR_CDP/sdk/converged/projections/android";
-    # set_var JNI_CLASSPATH "$ANDROID_PROJECTIONS/build/intermediates/classes/debug;C:/Program Files (x86)/Android/android-sdk/platforms/android-22/android.jar";
-    # set_var CON_DEV_DIR "$ANDROID_PROJECTIONS/build/intermediates/classes/debug/com/microsoft/connecteddevices";
-    # set_var CDP_JNI_DIR "$ANDROID_PROJECTIONS/src/jni";
-    ANDROID_PROJECTIONS="D:/git_repos/cdp_2/sdk/converged/projections/android"
-    # JNI_CLASSPATH="$ANDROID_PROJECTIONS/build/intermediates/classes/debug;C:/Program Files (x86)/Android/android-sdk/platforms/android-22/android.jar"
-    JNI_CLASSPATH="$ANDROID_PROJECTIONS/build/intermediates/classes/debug;C:/Program Files (x86)/Android/android-sdk/platforms/android-22/android.jar"
-    CON_DEV_DIR="$ANDROID_PROJECTIONS/build/intermediates/classes/debug/com/microsoft/connecteddevices"
-    CDP_JNI_DIR="$ANDROID_PROJECTIONS/src/jni"
-    ANDROID_TEST_PROJECTIONS="D:/git_repos/cdp_2/test/sdk/android"
-    CON_TEST_DIR="$ANDROID_TEST_PROJECTIONS/build/intermediates/classes/androidTest/debug/com/microsoft/connecteddevices"
-    CLASSES_JAR="sdk/converged/projections/android/build/intermediates/bundles/debug/classes.jar"
 }
 
 set_variables

@@ -50,13 +50,13 @@ declare -A work_dir_funcs=(
 
 declare -A script_keys=(
   # Bash
-  [inputrc]="$MY_HOME_WIN/.inputrc_custom"
-  [android]="$MY_HOME_WIN/android.bash"
-  [general]="$MY_HOME_WIN/general.bash"
-  [git]="$MY_HOME_WIN/git.bash"
-  [main]="$MY_HOME_WIN/main.bash"
-  [vars]="$MY_HOME_WIN/variables.bash"
-  [specific]="$MY_HOME_WIN/specific.bash"
+  [inputrc]="$BASH_REPO/.inputrc_custom"
+  [android]="$BASH_REPO/android.bash"
+  [general]="$BASH_REPO/general.bash"
+  [git]="$BASH_REPO/git.bash"
+  [main]="$BASH_REPO/main.bash"
+  [vars]="$BASH_REPO/variables.bash"
+  [specific]="$BASH_REPO/specific.bash"
   [sign_in]="$MY_HOME_WIN/one_rome_sign_in.py"
   [gradle]="$MY_HOME_WIN/gradle.py"
   [adb]="$MY_HOME_WIN/adb_android/adb_android/adb_android.py"
