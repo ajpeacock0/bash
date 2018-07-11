@@ -50,3 +50,5 @@ user_log () { $SUBL_ALIAS $USER_CDP_WIN\\\\CDPTraces.log; };
 set_cdp1() { CURR_CDP="$CDP_1" && CURR_CDP_WIN="$CDP_1_WIN" && set_variables; }
 set_cdp2() { CURR_CDP="$CDP_2" && CURR_CDP_WIN="$CDP_2_WIN" && set_variables; }
 set_cdp3() { CURR_CDP="$CDP_3" && CURR_CDP_WIN="$CDP_3_WIN" && set_variables; }
+
+ping_gcm() { curl --header "Authorization: key=$1" --header "Content-Type: application/json" https://gcm-http.googleapis.com/gcm/send -d "{\"registration_ids\":[\"$2\"]}"; }
