@@ -1,11 +1,11 @@
 import argparse
 import time
-from adb_android import adb_android as adb
+import adb_python_wrapper as adb
 from one_rome_coordinates import oneplus as co
 from secrets import CDP_MSA as msaUsername
 from secrets import CDP_MSA_PASS as msaPassword
-from secrets import CDP_UI_MSA as testUsername
-from secrets import CDP_UI_MSA_PASS as testPassword
+from secrets import CDP_TEST as testUsername
+from secrets import CDP_TEST_PASS as testPassword
 
 ADB_KEY_EVENT_OK = "66"
 ADB_KEY_EVENT_BACK = "3"

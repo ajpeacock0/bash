@@ -96,6 +96,9 @@ submit () { git push origin +HEAD; }
 
 #### Commitments ####
 
+# Adds all untracked files
+add_untracked() { echo -e "a\n*\nq\n" | git add -i; } 
+
 # Commit modified and deleted file changes. Brings up set text editor for message
 co() { git add -u && git commit; } 
 
@@ -152,7 +155,7 @@ conf_ours() { git diff --name-only --diff-filter=U | xargs git checkout --ours; 
 alias br="git branch"
 
 # View all remote and local branches
-alias remotebr="git branch -a"
+alias br_remote="git branch -a"
 
 # Checkout to another branch
 alias switch="git checkout "
@@ -224,7 +227,7 @@ rm_od ()
     done
 }
 
-alias reorder="git rebase -i HEAD~5"
+alias reorder="git rebase -i HEAD~10"
 
 clear_merged_br () { git branch --merged | egrep -v "(^\*|master|dev)" | xargs git branch -d; }
 
@@ -236,6 +239,8 @@ archive_br () { git tag archive/$1 $1 && git branch -D $1; }
 
 # Restore the archived branch
 restore_br () { git checkout -b $1 archive/$1; }
+
+count_commits () { git shortlog -s -n; }
 
 #### Given File Change ####
 

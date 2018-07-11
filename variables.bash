@@ -59,7 +59,9 @@ SUBL_FUNC="$C/Program Files/Sublime Text 3/subl.exe"
 COA="$GIT_REPOS/CortanaAndroid"
 PROJECT_ROME_GITHUB="$GIT_REPOS/project-rome"
 CDP_PINGPONG="$GIT_REPOS/CDPPingPong"
-MS_OS="$F/os/src"
+MS_OS="$GIT_REPOS/os/src"
+OS_APP_CONTRACTS="$MS_OS/onecoreuap/base/appmodel/AppContracts"
+OS_CDP="$MS_OS/onecoreuap/windows/cdp"
 CDP2OS="$GIT_REPOS/cdp2os"
 MMX="$GIT_REPOS/Shell.MMX/android/components/AgentsAPI"
 BASH="$GIT_REPOS/bash"
@@ -69,6 +71,9 @@ BASH="$GIT_REPOS/bash"
 ANDROID_SDK_BUILD_TOOLS="$USER_DIR/AppData/Local/Android/sdk/build-tools/25.0.0"
 WSL_HOME="$USER_DIR/AppData/Local/lxss/home/$LOCAL_WIN_USER"
 DOWNLOADS="$USER_DIR/Downloads"
+
+VS_TOOLS="$E/Microsoft\ Visual\ Studio/2017/Enterprise/VC/Tools"
+DUMPBIN="$VS_TOOLS/MSVC/14.14.26428/bin/Hostx64/x64/dumpbin.exe"
 
 # Local log directories
 SYS_CDP_WIN="\"$C_WIN\\Windows\\ServiceProfiles\\LocalService\\AppData\\Local\\ConnectedDevicesPlatform\""
@@ -104,10 +109,6 @@ MY_HOME="$C/cygwin64/home/$LOCAL_BASH_USER"
 
 # CDP paths scripts
 MY_ENLISTMENT="$F/enlistments"
-
-# Enlistment directories
-ENLISTMENT_CDP="$MY_ENLISTMENT/onecoreuap/windows/cdp"
-ENLISTMENT_APP_CONTRACT="$MY_ENLISTMENT/onecoreuap/base/appmodel/AppContracts"
 
 # Application directories
 JAVA="$JAVA_HOME/bin/java.exe"

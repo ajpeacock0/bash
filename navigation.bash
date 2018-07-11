@@ -22,7 +22,6 @@ declare -A nav_keys=(
   [cdpmaster]=$CDP_MASTER
   [github]=$PROJECT_ROME_GITHUB
   [pingpong]=$CDP_PINGPONG
-  [os]=$MS_OS
   [cdp2os]=$CDP2OS
   [mmx]=$MMX
   [bash]=$BASH
@@ -30,10 +29,10 @@ declare -A nav_keys=(
   [notes]=$NOTES
   [work]=$WORK
   [home]=$MY_HOME
-  # Enlistment
-  [en]=$MY_ENLISTMENT
-  [en_cdp]=$ENLISTMENT_CDP
-  [en_appservice]=$ENLISTMENT_APP_CONTRACT
+  # OS Repo
+  [os]=$MS_OS
+  [os_cdp]=$OS_CDP
+  [os_appsvc]=$OS_APP_CONTRACTS
   # Miscellaneous
   [scripts]=$SCRIPTS
   [wsl]=$WSL_HOME

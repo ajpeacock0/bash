@@ -11,7 +11,7 @@ adb_in() { python $ANDROID_SCRIPTS_WIN\\adb_commands.py install --launch $@ 2>&1
 launch() { python $ANDROID_SCRIPTS_WIN\\adb_commands.py launch $@ 2>&1; }
 
 # OneRomanApp sign in / credential shortcut
-ora () { python $MY_HOME_WIN\\one_rome_sign_in.py $@ 2>&1; }
+ora () { python $ANDROID_SCRIPTS_WIN\\one_rome_sign_in.py $@ 2>&1; }
 
 # View logcat though a better view - https://github.com/JakeWharton/pidcat
 logcat () { python "$D_WIN\git_repos\pidcat\pidcat.py" $@; }
