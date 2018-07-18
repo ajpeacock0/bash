@@ -115,7 +115,7 @@ alias co_am_ed="git add -u && git commit --amend"
 alias reset="git reset HEAD~"
 
 # Discard all non-commited changes
-alias discard="git stash save --keep-index && git stash drop"
+alias discard="git checkout -- ."
 
 # Reset back to the state before the last executed git command. Use as an "undo" command
 alias gundo="git reset HEAD@{1}"
