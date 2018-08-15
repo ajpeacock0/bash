@@ -316,3 +316,10 @@ rm_untracked ()
 
 # Adds the worktree with the given directory name. Run this in the main repo
 add_worktree() { git worktree prune && git worktree add ../$1 master; }
+
+
+# Optimized `replace` for use in a git repository
+greplace () { a=$1; b=$2; git grep --files-with-matches "$a" | xargs sed -i -- s/$a/$b/g; }
+
+# Rename files in git directory
+grename () { a=$1; b=$2; for old_file in $(git ls-files "*$a*"); do new_file=$(echo $old_file | sed -En "s/$a/$b/p"); git mv -f $old_file $new_file; done; }

@@ -25,6 +25,7 @@ declare -A nav_keys=(
   [cdp2os]=$CDP2OS
   [mmx]=$MMX
   [bash]=$BASH
+  [cpub]=$CPUB
   # notes
   [notes]=$NOTES
   [work]=$WORK
@@ -52,6 +53,7 @@ declare -A script_keys=(
   [inputrc]="$BASH_REPO/.inputrc_custom"
   [android]="$BASH_REPO/android.bash"
   [general]="$BASH_REPO/general.bash"
+  [nav]="$BASH_REPO/navigation.bash"
   [git]="$BASH_REPO/git.bash"
   [main]="$BASH_REPO/main.bash"
   [vars]="$BASH_REPO/variables.bash"

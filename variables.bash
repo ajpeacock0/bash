@@ -65,6 +65,7 @@ OS_CDP="$MS_OS/onecoreuap/windows/cdp"
 CDP2OS="$GIT_REPOS/cdp2os"
 MMX="$GIT_REPOS/Shell.MMX/android/components/AgentsAPI"
 BASH="$GIT_REPOS/bash"
+CPUB="$GIT_REPOS/cpubwin-project-rome"
 
 ######### DEPENDENT ON WHAT DIR YOU'RE IN ########
 

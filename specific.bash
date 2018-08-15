@@ -11,6 +11,10 @@ alias err="//tkfiltoolbox/tools/839/1.7.2/x86/err "
 
 alias updot="python $GIT_REPOS_WIN/updot/updot.py"
 
+
+tracerpt_etl() { tracerpt $1.etl -of CSV -o $1.csv; }
+parse_csv() { python $SCRIPTS_WIN\\parse_etl_csv.py $@ 2>&1; }
+
 # Windows style newline characters can cause issues in Cygwin in certain files.
 # Replacement for the command with the same. Removes trailing \r character
 # that causes the error `'\r': command not found`

@@ -33,3 +33,6 @@ bot() { python $ANDROID_SCRIPTS_WIN\\build_ora_test.py $@ 2>&1; }
 
 # Run OneRomanApp Tests
 rot() { python $ANDROID_SCRIPTS_WIN\\run_ora_test.py $@ 2>&1; }
+
+# Update the CDPGlobalSettings.cdp to allow connections from RomeFiddler
+fiddler_enable() { python $ANDROID_SCRIPTS_WIN\\rome_fiddler_enable.py $@ 2>&1; }
