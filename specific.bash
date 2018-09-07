@@ -5,6 +5,7 @@ alias subl="$SUBL_ALIAS"
 alias cmake="$CMAKE"
 alias taef="$TAEF"
 alias dumpbin="$DUMPBIN"
+alias yadm="$YADM/yadm"
 
 # Alias to internal Windows error code lookup
 alias err="//tkfiltoolbox/tools/839/1.7.2/x86/err "
